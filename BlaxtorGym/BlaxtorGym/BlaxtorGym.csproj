@@ -8,4 +8,15 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="src\BlaxtorGym.Application\" />
+    <Folder Include="src\BlaxtorGym.Domain\Common\" />
+    <Folder Include="src\BlaxtorGym.Domain\Entities\" />
+    <Folder Include="src\BlaxtorGym.Domain\Enums\" />
+    <Folder Include="src\BlaxtorGym.Domain\Interfaces\" />
+    <Folder Include="src\BlaxtorGym.Domain\ValueObjects\" />
+    <Folder Include="src\BlaxtorGym.Infraestructure\" />
+    <Folder Include="src\BlaxtorGym.WPF\" />
+  </ItemGroup>
+
 </Project>
