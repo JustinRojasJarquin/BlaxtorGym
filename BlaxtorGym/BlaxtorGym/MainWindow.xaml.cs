@@ -25,5 +25,15 @@ namespace BlaxtorGym
         {
 
         }
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void SplitButton_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
