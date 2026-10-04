@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="src\BlaxtorGym.Infraestructure\Data\" />
-    <Folder Include="src\BlaxtorGym.Infraestructure\Configuration\" />
-    <Folder Include="src\BlaxtorGym.Infraestructure\Services\" />
-    <Folder Include="src\BlaxtorGym.Infraestructure\Repositories\" />
     <Folder Include="src\BlaxtorGym.WPF\Resources\" />
     <Folder Include="src\BlaxtorGym.WPF\ViewModels\" />
     <Folder Include="src\BlaxtorGym.WPF\Views\" />
