@@ -9,8 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="src\BlaxtorGym.Domain\Interfaces\" />
-    <Folder Include="src\BlaxtorGym.Domain\ValueObjects\" />
     <Folder Include="src\BlaxtorGym.Infraestructure\Data\" />
     <Folder Include="src\BlaxtorGym.Infraestructure\Configuration\" />
     <Folder Include="src\BlaxtorGym.Infraestructure\Services\" />
