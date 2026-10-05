@@ -9,5 +9,7 @@ public static class DatabaseInitializer
         await using var context = new AppDbContext();
 
         await context.Database.MigrateAsync();
+
+        await DatabaseSeeder.EjecutarAsync(context);
     }
 }
