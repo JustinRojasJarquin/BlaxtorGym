@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BlaxtorGym.src.BlaxtorGym.Domain.Common;
 
-namespace BlaxtorGym.src.BlaxtorGym.Domain.Entities
+namespace BlaxtorGym.src.BlaxtorGym.Domain.Entities;
+
+public class TipoMembresia : BaseEntity
 {
-    internal class TipoMembresia
-    {
-    }
+    public string Nombre { get; set; } = string.Empty;
+
+    public int DuracionDias { get; set; }
+
+    public string Descripcion { get; set; } = string.Empty;
+
+    public bool Activo { get; set; } = true;
 }
