@@ -1,10 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.IO;
 
-namespace BlaxtorGym.src.BlaxtorGym.Infraestructure.Configuration
+namespace BlaxtorGym.src.BlaxtorGym.Infraestructure.Configuration;
+
+public static class DatabaseSettings
 {
-    internal class DatabaseSettings
+    public static string ObtenerRutaBaseDatos()
     {
+        string carpetaDatos = Path.Combine(
+            AppContext.BaseDirectory,
+            "Data");
+
+        Directory.CreateDirectory(carpetaDatos);
+
+        return Path.Combine(carpetaDatos, "blaxtorgym.db");
+    }
+
+    public static string ObtenerCadenaConexion()
+    {
+        return $"Data Source={ObtenerRutaBaseDatos()}";
     }
 }

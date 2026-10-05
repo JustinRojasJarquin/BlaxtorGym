@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace BlaxtorGym.src.BlaxtorGym.Infraestructure.Data
+namespace BlaxtorGym.src.BlaxtorGym.Infraestructure.Data;
+
+public static class DatabaseInitializer
 {
-    internal class DatabaseInitializer
+    public static async Task InicializarAsync()
     {
+        await using var context = new AppDbContext();
+
+        await context.Database.EnsureCreatedAsync();
     }
 }

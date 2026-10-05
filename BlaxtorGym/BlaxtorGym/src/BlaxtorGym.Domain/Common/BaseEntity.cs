@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace BlaxtorGym.src.BlaxtorGym.Domain.Common;
 
-namespace BlaxtorGym.src.BlaxtorGym.Domain.Common
+public abstract class BaseEntity
 {
-    internal class BaseEntity
-    {
-    }
+    public int Id { get; set; }
 }

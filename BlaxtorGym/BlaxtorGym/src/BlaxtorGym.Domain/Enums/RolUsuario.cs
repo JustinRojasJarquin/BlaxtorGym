@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace BlaxtorGym.src.BlaxtorGym.Domain.Enums;
 
-namespace BlaxtorGym.src.BlaxtorGym.Domain.Enums
+public enum RolUsuario
 {
-    internal class RolUsuario
-    {
-    }
+    Administrador = 1
 }
