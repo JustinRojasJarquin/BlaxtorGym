@@ -1,10 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using BlaxtorGym.src.BlaxtorGym.Domain.Common;
 
-namespace BlaxtorGym.src.BlaxtorGym.Domain.Entities
+namespace BlaxtorGym.src.BlaxtorGym.Domain.Entities;
+
+public class BitacoraCambio : BaseEntity
 {
-    internal class BitacoraCambio
-    {
-    }
+    public DateTime FechaHora { get; set; } = DateTime.Now;
+
+    public string Accion { get; set; } = string.Empty;
+
+    public string Entidad { get; set; } = string.Empty;
+
+    public int? EntidadId { get; set; }
+
+    public string? Descripcion { get; set; }
+
+    public int UsuarioId { get; set; }
+
+    public Usuario Usuario { get; set; } = null!;
 }
