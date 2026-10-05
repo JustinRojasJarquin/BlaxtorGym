@@ -8,6 +8,6 @@ public static class DatabaseInitializer
     {
         await using var context = new AppDbContext();
 
-        await context.Database.EnsureCreatedAsync();
+        await context.Database.MigrateAsync();
     }
 }
