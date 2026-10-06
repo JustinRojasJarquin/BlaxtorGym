@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlaxtorGym - Estructura completa del proyecto</title>
+<style>
+:root{
+  --bg:#f5f7fb;--panel:#fff;--ink:#17233e;--muted:#687083;--line:#dbe2ec;
+  --ok:#1f7a55;--work:#a66a00;--plan:#687083;--soft:#eaf0f7;--code:#f7f9fc;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#202534;font:15px/1.55 "Segoe UI",Arial,sans-serif}
+header{background:linear-gradient(135deg,#17233e,#283a66);color:white;padding:38px 28px}
+header .wrap,.wrap{max-width:1180px;margin:auto}
+h1{margin:0 0 8px;font-size:34px} header p{margin:3px 0;color:#e4e9f2}
+main{padding:26px 18px 50px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin:0 0 20px;box-shadow:0 3px 12px rgba(20,34,61,.05)}
+h2{color:var(--ink);margin-top:0} h3{color:var(--ink)}
+.badge{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:700;margin-right:5px}
+.done{background:#e5f5ee;color:var(--ok)} .work{background:#fff2d9;color:var(--work)} .plan{background:#eef1f5;color:var(--plan)}
+.legend{display:flex;gap:10px;flex-wrap:wrap}
+code{background:var(--code);border:1px solid #e7ebf2;border-radius:5px;padding:1px 5px;color:#28334b}
+.phase-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.phase{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fbfcfe}
+.phase strong{color:var(--ink)}
+.tree, .tree ul{list-style:none;margin:0;padding-left:18px}
+.tree>li{padding-left:0}.tree li{margin:4px 0;position:relative}
+.tree li::before{content:"";position:absolute;left:-12px;top:12px;width:8px;border-top:1px solid #c8d0dc}
+details{margin:4px 0} summary{cursor:pointer;color:var(--ink);font-weight:650}
+.file{font-family:Consolas,"Courier New",monospace;font-size:13px}
+.meta{font-size:12px;margin-left:8px}.meta.done{background:none}.meta.work{background:none}.meta.plan{background:none}
+table{width:100%;border-collapse:collapse}th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--ink);background:#f7f9fc}
+.note{padding:12px 14px;background:var(--soft);border-left:4px solid #5a78a8;border-radius:6px}
+footer{text-align:center;color:var(--muted);padding:20px}
+@media(max-width:700px){h1{font-size:27px}.card{padding:16px}table{font-size:13px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>BlaxtorGym</h1>
+<p>Estructura completa del proyecto - estado actualizado</p>
+<p>Justin Rojas Jarquin · Cristopher Ureña Valverde · C# · WPF · .NET 10 · SQLite · EF Core</p>
+</div></header>
+<main class="wrap">
+<section class="card">
+<h2>Estado general</h2>
+<div class="legend"><span class="badge done">COMPLETADO</span><span class="badge work">EN DESARROLLO / LISTO PARA INICIAR</span><span class="badge plan">PLANIFICADO</span></div>
+<p>El proyecto mantiene una sola aplicación WPF y organiza Domain, Application, Infraestructure y WPF como carpetas lógicas. Se conserva el nombre físico <code>BlaxtorGym.Infraestructure</code>.</p>
+<div class="phase-grid">
+<div class="phase"><span class="badge done">✓</span><strong>Fases 1-4</strong><br>Configuración, persistencia, login y tipos de cliente terminados funcionalmente.</div>
+<div class="phase"><span class="badge work">▶</span><strong>Fase 5</strong><br>Clientes - Cristopher.</div>
+<div class="phase"><span class="badge work">▶</span><strong>Fase 6</strong><br>Tipos de membresía + tarifas - Justin, puede avanzar en paralelo.</div>
+<div class="phase"><span class="badge plan">□</span><strong>Fases 7-16</strong><br>Pendientes según dependencias.</div>
+</div>
+</section>
+
+<section class="card">
+<h2>Estructura completa</h2>
+<p>Los archivos marcados como <span class="badge done">implementados</span> ya forman parte del desarrollo actual. Los <span class="badge plan">planificados</span> se crearán cuando su fase lo requiera.</p>
+<ul class="tree">
+<li><details open><summary>BlaxtorGym/</summary><ul>
+<li><span class="file">BlaxtorGym.csproj</span> <span class="meta done">implementado · F1</span></li>
+<li><span class="file">App.xaml</span> <span class="meta done">implementado · integración temporal</span></li>
+<li><span class="file">App.xaml.cs</span> <span class="meta done">implementado · composición actual</span></li>
+<li><span class="file">MainWindow.xaml</span> <span class="meta done">implementado · contenedor temporal</span></li>
+<li><span class="file">MainWindow.xaml.cs</span> <span class="meta done">implementado · carga temporal de módulos</span></li>
+<li><details open><summary>Migrations/ <span class="meta done">F2</span></summary><ul>
+<li><span class="file">InitialCreate.cs</span> <span class="meta done">implementado</span></li>
+<li><span class="file">AppDbContextModelSnapshot.cs</span> <span class="meta done">implementado</span></li>
+</ul></details></li>
+<li><details open><summary>src/</summary><ul>
+<li><details open><summary>BlaxtorGym.Domain/</summary><ul>
+<li><details><summary>Common/</summary><ul><li><span class="file">BaseEntity.cs</span> <span class="meta done">F2</span></li></ul></details></li>
+<li><details><summary>Enums/</summary><ul><li><span class="file">RolUsuario.cs</span> <span class="meta done">F2</span></li></ul></details></li>
+<li><details open><summary>Entities/</summary><ul>
+<li><span class="file">Usuario.cs</span> <span class="meta done">F2</span></li><li><span class="file">TipoCliente.cs</span> <span class="meta done">F2</span></li><li><span class="file">Cliente.cs</span> <span class="meta done">F2</span></li><li><span class="file">TipoMembresia.cs</span> <span class="meta done">F2</span></li><li><span class="file">Precio.cs</span> <span class="meta done">F2</span></li><li><span class="file">Membresia.cs</span> <span class="meta done">F2</span></li><li><span class="file">Pago.cs</span> <span class="meta done">F2</span></li><li><span class="file">MedicionFisica.cs</span> <span class="meta done">F2</span></li><li><span class="file">Notificacion.cs</span> <span class="meta done">F2</span></li><li><span class="file">BitacoraCambio.cs</span> <span class="meta done">F2</span></li>
+</ul></details></li>
+<li><details open><summary>Interfaces/</summary><ul>
+<li><span class="file">IUsuarioRepository.cs</span> <span class="meta done">F3</span></li>
+<li><span class="file">ITipoClienteRepository.cs</span> <span class="meta done">F4</span></li>
+<li><span class="file">IClienteRepository.cs</span> <span class="meta work">F5</span></li>
+<li><span class="file">ITipoMembresiaRepository.cs</span> <span class="meta plan">F6</span></li>
+<li><span class="file">IPrecioRepository.cs</span> <span class="meta plan">F6</span></li>
+<li><span class="file">IMedicionFisicaRepository.cs</span> <span class="meta plan">F7</span></li>
+<li><span class="file">IMembresiaRepository.cs</span> <span class="meta plan">F8</span></li>
+<li><span class="file">IPagoRepository.cs</span> <span class="meta plan">F9</span></li>
+<li><span class="file">INotificacionRepository.cs</span> <span class="meta plan">F10</span></li>
+<li><span class="file">IBitacoraRepository.cs</span> <span class="meta plan">F13</span></li>
+</ul></details></li>
+<li><details><summary>ValueObjects/</summary><ul><li><span class="file">(reservado; sin archivos forzados por ahora)</span></li></ul></details></li>
+</ul></details></li>
+
+<li><details open><summary>BlaxtorGym.Application/</summary><ul>
+<li><details open><summary>DTOs/</summary><ul>
+<li><span class="file">LoginRequestDto.cs</span> <span class="meta done">F3</span></li>
+<li><span class="file">ResultadoLogin.cs</span> <span class="meta done">F3 · nuevo</span></li>
+<li><span class="file">Reporte*.cs</span> <span class="meta plan">F12 · según necesidad real</span></li>
+</ul></details></li>
+<li><details open><summary>Services/</summary><ul>
+<li><span class="file">AutenticacionService.cs</span> <span class="meta done">F3</span></li>
+<li><span class="file">TipoClienteService.cs</span> <span class="meta done">F4</span></li>
+<li><span class="file">ClienteService.cs</span> <span class="meta work">F5</span></li>
+<li><span class="file">TipoMembresiaService.cs</span> <span class="meta plan">F6</span></li>
+<li><span class="file">TarifaService.cs</span> <span class="meta plan">F6</span></li>
+<li><span class="file">MedicionFisicaService.cs</span> <span class="meta plan">F7</span></li>
+<li><span class="file">MembresiaService.cs</span> <span class="meta plan">F8</span></li>
+<li><span class="file">PagoService.cs</span> <span class="meta plan">F9</span></li>
+<li><span class="file">NotificacionService.cs</span> <span class="meta plan">F10</span></li>
+<li><span class="file">BackupService.cs</span> <span class="meta plan">F11 · solo si se justifica en Application</span></li>
+<li><span class="file">ReporteService.cs</span> <span class="meta plan">F12</span></li>
+<li><span class="file">BitacoraService.cs</span> <span class="meta plan">F13</span></li>
+</ul></details></li>
+</ul></details></li>
+
+<li><details open><summary>BlaxtorGym.Infraestructure/</summary><ul>
+<li><details open><summary>Configuration/</summary><ul><li><span class="file">DatabaseSettings.cs</span> <span class="meta done">F2</span></li></ul></details></li>
+<li><details open><summary>Data/</summary><ul><li><span class="file">AppDbContext.cs</span> <span class="meta done">F2</span></li><li><span class="file">DatabaseInitializer.cs</span> <span class="meta done">F2</span></li><li><span class="file">DatabaseSeeder.cs</span> <span class="meta done">F2 · nuevo</span></li></ul></details></li>
+<li><details open><summary>Repositories/</summary><ul>
+<li><span class="file">UsuarioRepository.cs</span> <span class="meta done">F3</span></li>
+<li><span class="file">TipoClienteRepository.cs</span> <span class="meta done">F4</span></li>
+<li><span class="file">ClienteRepository.cs</span> <span class="meta work">F5</span></li>
+<li><span class="file">TipoMembresiaRepository.cs</span> <span class="meta plan">F6</span></li>
+<li><span class="file">PrecioRepository.cs</span> <span class="meta plan">F6</span></li>
+<li><span class="file">MedicionFisicaRepository.cs</span> <span class="meta plan">F7</span></li>
+<li><span class="file">MembresiaRepository.cs</span> <span class="meta plan">F8</span></li>
+<li><span class="file">PagoRepository.cs</span> <span class="meta plan">F9</span></li>
+<li><span class="file">NotificacionRepository.cs</span> <span class="meta plan">F10</span></li>
+<li><span class="file">BitacoraRepository.cs</span> <span class="meta plan">F13</span></li>
+</ul></details></li>
+<li><details><summary>Services/</summary><ul>
+<li><span class="file">CorreoService.cs</span> <span class="meta plan">F10</span></li>
+<li><span class="file">BackupService.cs</span> <span class="meta plan">F11</span></li>
+<li><span class="file">PdfService.cs</span> <span class="meta plan">F12</span></li>
+</ul></details></li>
+</ul></details></li>
+
+<li><details open><summary>BlaxtorGym.WPF/</summary><ul>
+<li><details open><summary>Commands/</summary><ul><li><span class="file">RelayCommand.cs</span> <span class="meta done">F3 · nuevo y reutilizable</span></li></ul></details></li>
+<li><details open><summary>Notifications/</summary><ul>
+<li><span class="file">TipoNotificacion.cs</span> <span class="meta done">F3 · nuevo</span></li>
+<li><span class="file">INotificationService.cs</span> <span class="meta done">F3 · nuevo</span></li>
+<li><span class="file">NotificationServiceBase.cs</span> <span class="meta done">F3 · nuevo</span></li>
+<li><span class="file">MessageBoxNotificationService.cs</span> <span class="meta done">F3 · reemplazable en F15</span></li>
+</ul></details></li>
+<li><details open><summary>ViewModels/</summary><ul>
+<li><span class="file">LoginViewModel.cs</span> <span class="meta done">F3</span></li>
+<li><span class="file">TipoClienteViewModel.cs</span> <span class="meta done">F4</span></li>
+<li><span class="file">ClienteViewModel.cs</span> <span class="meta work">F5</span></li>
+<li><span class="file">TarifasViewModel.cs</span> <span class="meta plan">F6</span></li>
+<li><span class="file">MedicionesViewModel.cs</span> <span class="meta plan">F7</span></li>
+<li><span class="file">MembresiasViewModel.cs</span> <span class="meta plan">F8</span></li>
+<li><span class="file">PagosViewModel.cs</span> <span class="meta plan">F9</span></li>
+<li><span class="file">NotificacionesViewModel.cs</span> <span class="meta plan">F10</span></li>
+<li><span class="file">ConfiguracionViewModel.cs</span> <span class="meta plan">F11</span></li>
+<li><span class="file">ReportesViewModel.cs</span> <span class="meta plan">F12</span></li>
+<li><span class="file">BitacoraViewModel.cs</span> <span class="meta plan">F13</span></li>
+</ul></details></li>
+<li><details open><summary>Views/</summary><ul>
+<li><span class="file">LoginWindow.xaml</span> + <span class="file">LoginWindow.xaml.cs</span> <span class="meta done">F3</span></li>
+<li><span class="file">TipoClienteView.xaml</span> + <span class="file">TipoClienteView.xaml.cs</span> <span class="meta done">F4</span></li>
+<li><span class="file">ClienteView.xaml</span> + <span class="file">ClienteView.xaml.cs</span> <span class="meta work">F5</span></li>
+<li><span class="file">TarifasView.xaml</span> + <span class="file">TarifasView.xaml.cs</span> <span class="meta plan">F6</span></li>
+<li><span class="file">MedicionesView.xaml</span> + <span class="file">MedicionesView.xaml.cs</span> <span class="meta plan">F7</span></li>
+<li><span class="file">MembresiasView.xaml</span> + <span class="file">MembresiasView.xaml.cs</span> <span class="meta plan">F8</span></li>
+<li><span class="file">PagosView.xaml</span> + <span class="file">PagosView.xaml.cs</span> <span class="meta plan">F9</span></li>
+<li><span class="file">NotificacionesView.xaml</span> + <span class="file">NotificacionesView.xaml.cs</span> <span class="meta plan">F10</span></li>
+<li><span class="file">ConfiguracionView.xaml</span> + <span class="file">ConfiguracionView.xaml.cs</span> <span class="meta plan">F11</span></li>
+<li><span class="file">ReportesView.xaml</span> + <span class="file">ReportesView.xaml.cs</span> <span class="meta plan">F12</span></li>
+<li><span class="file">BitacoraView.xaml</span> + <span class="file">BitacoraView.xaml.cs</span> <span class="meta plan">F13</span></li>
+</ul></details></li>
+<li><details><summary>Resources/</summary><ul><li><span class="file">*.xaml</span> <span class="meta plan">F15 · estilos, colores y componentes visuales</span></li></ul></details></li>
+<li><span class="file">NavigationService.cs</span> <span class="meta plan">F14 · crear solo si se confirma necesidad real</span></li>
+</ul></details></li>
+</ul></details></li>
+</ul></details></li>
+</ul>
+</section>
+
+<section class="card">
+<h2>Rutas de trabajo por integrante</h2>
+<table><thead><tr><th>Justin</th><th>Cristopher</th></tr></thead><tbody>
+<tr><td>✓ Configuración</td><td>▶ Clientes</td></tr>
+<tr><td>✓ SQLite / EF Core</td><td>□ Mediciones físicas</td></tr>
+<tr><td>✓ Login</td><td>□ Notificaciones de vencimiento</td></tr>
+<tr><td>✓ Tipos de cliente</td><td>□ Backups</td></tr>
+<tr><td>▶ Tipos de membresía + Tarifas</td><td>□ Reportes / PDF</td></tr>
+<tr><td>□ Membresías</td><td rowspan="2">Después: integración, bitácora, diseño y pruebas con ambos.</td></tr>
+<tr><td>□ Pagos</td></tr>
+</tbody></table>
+</section>
+
+<section class="card">
+<h2>Regla para archivos nuevos</h2>
+<div class="note">Si más adelante una fase necesita un archivo que no aparece aquí, se añadirá únicamente cuando exista una responsabilidad concreta. Se indicará la ruta, por qué hace falta y en qué fase entra. No se crearán capas, DTOs, repositorios o servicios “por si acaso”.</div>
+</section>
+</main>
+<footer>BlaxtorGym · estructura modular actualizada</footer>
+</body>
+</html>
