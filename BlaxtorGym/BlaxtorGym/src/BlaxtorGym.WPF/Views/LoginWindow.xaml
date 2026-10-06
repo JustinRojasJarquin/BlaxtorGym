@@ -1,9 +1,51 @@
-<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Window x:Class="BlaxtorGym.src.BlaxtorGym.WPF.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Blaxtor Gym"
-        Width="800"
-        Height="500"
-        WindowStartupLocation="CenterScreen">
-    <Grid>
+        Title="BlaxtorGym - Login"
+        Height="330"
+        Width="400"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+
+    <Grid Margin="30">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Inicio de sesión"
+                   FontSize="20"
+                   Margin="0,0,0,20"/>
+
+        <StackPanel Grid.Row="1"
+                    Margin="0,0,0,10">
+
+            <TextBlock Text="Usuario"/>
+
+            <TextBox Text="{Binding NombreUsuario,
+                                    UpdateSourceTrigger=PropertyChanged}"
+                     Height="30"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2"
+                    Margin="0,0,0,15">
+
+            <TextBlock Text="Contraseña"/>
+
+            <PasswordBox x:Name="PasswordBox"
+                         Height="30"
+                         PasswordChanged="PasswordBox_PasswordChanged"/>
+        </StackPanel>
+
+        <Button Grid.Row="3"
+                Content="Iniciar sesión"
+                Height="35"
+                Command="{Binding IniciarSesionCommand}"/>
+
     </Grid>
+
 </Window>
