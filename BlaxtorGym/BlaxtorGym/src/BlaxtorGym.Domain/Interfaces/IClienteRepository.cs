@@ -4,7 +4,9 @@ namespace BlaxtorGym.src.BlaxtorGym.Domain.Interfaces;
 
 public interface IClienteRepository
 {
-    Task<List<Cliente>> ObtenerTodosAsync();
+    Task<List<Cliente>> BuscarAsync(
+        string criterio,
+        int limite = 100);
 
     Task<List<Cliente>> ObtenerActivosAsync();
 

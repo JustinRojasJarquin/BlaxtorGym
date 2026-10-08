@@ -12,22 +12,29 @@ namespace BlaxtorGym.src.BlaxtorGym.WPF.ViewModels;
 public class ClientesViewModel : INotifyPropertyChanged
 {
     private readonly ClienteService _clienteService;
+    private readonly TipoClienteService _tipoClienteService;
     private readonly INotificationService _notificationService;
 
     private Cliente? _clienteSeleccionado;
+    private TipoCliente? _tipoClienteSeleccionado;
+
     private string _cedula = string.Empty;
     private string _nombreCompleto = string.Empty;
     private string _telefono = string.Empty;
     private string _correoElectronico = string.Empty;
-    private DateTime _fechaNacimiento = DateTime.Today;
-    private int _tipoClienteId;
+    private string _criterioBusqueda = string.Empty;
+
+    private DateTime? _fechaNacimiento;
+
     private bool _procesando;
 
     public ClientesViewModel(
         ClienteService clienteService,
+        TipoClienteService tipoClienteService,
         INotificationService notificationService)
     {
         _clienteService = clienteService;
+        _tipoClienteService = tipoClienteService;
         _notificationService = notificationService;
 
         CrearCommand = new RelayCommand(
@@ -36,11 +43,15 @@ public class ClientesViewModel : INotifyPropertyChanged
 
         ModificarCommand = new RelayCommand(
             _ => ModificarAsync(),
-            _ => !Procesando && ClienteSeleccionado is not null);
+            _ =>
+                !Procesando &&
+                ClienteSeleccionado is not null);
 
         ActivarDesactivarCommand = new RelayCommand(
             _ => CambiarEstadoAsync(),
-            _ => !Procesando && ClienteSeleccionado is not null);
+            _ =>
+                !Procesando &&
+                ClienteSeleccionado is not null);
 
         LimpiarCommand = new RelayCommand(
             _ =>
@@ -49,10 +60,22 @@ public class ClientesViewModel : INotifyPropertyChanged
                 return Task.CompletedTask;
             },
             _ => !Procesando);
+
+        BuscarCommand = new RelayCommand(
+            _ => CargarClientesAsync(),
+            _ => !Procesando);
+
+        LimpiarBusquedaCommand = new RelayCommand(
+            _ => LimpiarBusquedaAsync(),
+            _ => !Procesando);
     }
 
     public ObservableCollection<Cliente> Clientes { get; }
         = new();
+
+    public ObservableCollection<TipoCliente>
+        TiposCliente
+    { get; } = new();
 
     public Cliente? ClienteSeleccionado
     {
@@ -65,9 +88,27 @@ public class ClientesViewModel : INotifyPropertyChanged
             }
 
             _clienteSeleccionado = value;
+
             OnPropertyChanged();
+
             CargarSeleccionadoEnFormulario();
+
             CommandManager.InvalidateRequerySuggested();
+        }
+    }
+
+    public TipoCliente? TipoClienteSeleccionado
+    {
+        get => _tipoClienteSeleccionado;
+        set
+        {
+            if (_tipoClienteSeleccionado == value)
+            {
+                return;
+            }
+
+            _tipoClienteSeleccionado = value;
+            OnPropertyChanged();
         }
     }
 
@@ -131,7 +172,7 @@ public class ClientesViewModel : INotifyPropertyChanged
         }
     }
 
-    public DateTime FechaNacimiento
+    public DateTime? FechaNacimiento
     {
         get => _fechaNacimiento;
         set
@@ -146,17 +187,17 @@ public class ClientesViewModel : INotifyPropertyChanged
         }
     }
 
-    public int TipoClienteId
+    public string CriterioBusqueda
     {
-        get => _tipoClienteId;
+        get => _criterioBusqueda;
         set
         {
-            if (_tipoClienteId == value)
+            if (_criterioBusqueda == value)
             {
                 return;
             }
 
-            _tipoClienteId = value;
+            _criterioBusqueda = value;
             OnPropertyChanged();
         }
     }
@@ -173,16 +214,25 @@ public class ClientesViewModel : INotifyPropertyChanged
 
             _procesando = value;
             OnPropertyChanged();
+
             CommandManager.InvalidateRequerySuggested();
         }
     }
 
     public ICommand CrearCommand { get; }
+
     public ICommand ModificarCommand { get; }
+
     public ICommand ActivarDesactivarCommand { get; }
+
     public ICommand LimpiarCommand { get; }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    public ICommand BuscarCommand { get; }
+
+    public ICommand LimpiarBusquedaCommand { get; }
+
+    public event PropertyChangedEventHandler?
+        PropertyChanged;
 
     public async Task CargarAsync()
     {
@@ -190,7 +240,45 @@ public class ClientesViewModel : INotifyPropertyChanged
         {
             Procesando = true;
 
-            List<Cliente> clientes = await _clienteService.ObtenerTodosAsync();
+            await CargarTiposClienteAsync();
+            await CargarClientesAsync();
+        }
+        catch (Exception)
+        {
+            _notificationService.MostrarError(
+                "No fue posible cargar la información de clientes.");
+        }
+        finally
+        {
+            Procesando = false;
+        }
+    }
+
+    private async Task CargarTiposClienteAsync()
+    {
+        List<TipoCliente> tipos =
+            await _tipoClienteService.ObtenerTodosAsync();
+
+        TiposCliente.Clear();
+
+        foreach (TipoCliente tipo in tipos)
+        {
+            if (tipo.Activo)
+            {
+                TiposCliente.Add(tipo);
+            }
+        }
+    }
+
+    private async Task CargarClientesAsync()
+    {
+        try
+        {
+            Procesando = true;
+
+            List<Cliente> clientes =
+                await _clienteService.BuscarAsync(
+                    CriterioBusqueda);
 
             Clientes.Clear();
 
@@ -216,27 +304,33 @@ public class ClientesViewModel : INotifyPropertyChanged
         {
             Procesando = true;
 
+            int tipoClienteId =
+                TipoClienteSeleccionado?.Id ?? 0;
+
             await _clienteService.CrearAsync(
                 Cedula,
                 NombreCompleto,
                 Telefono,
                 CorreoElectronico,
                 FechaNacimiento,
-                TipoClienteId);
+                tipoClienteId);
 
             _notificationService.MostrarExito(
                 "Cliente creado correctamente.");
 
             LimpiarFormulario();
-            await CargarAsync();
+
+            await CargarClientesAsync();
         }
         catch (ArgumentException ex)
         {
-            _notificationService.MostrarAdvertencia(ex.Message);
+            _notificationService.MostrarAdvertencia(
+                ex.Message);
         }
         catch (InvalidOperationException ex)
         {
-            _notificationService.MostrarAdvertencia(ex.Message);
+            _notificationService.MostrarAdvertencia(
+                ex.Message);
         }
         catch (Exception)
         {
@@ -260,6 +354,9 @@ public class ClientesViewModel : INotifyPropertyChanged
         {
             Procesando = true;
 
+            int tipoClienteId =
+                TipoClienteSeleccionado?.Id ?? 0;
+
             await _clienteService.ModificarAsync(
                 ClienteSeleccionado.Id,
                 Cedula,
@@ -267,21 +364,24 @@ public class ClientesViewModel : INotifyPropertyChanged
                 Telefono,
                 CorreoElectronico,
                 FechaNacimiento,
-                TipoClienteId);
+                tipoClienteId);
 
             _notificationService.MostrarExito(
                 "Cliente modificado correctamente.");
 
             LimpiarFormulario();
-            await CargarAsync();
+
+            await CargarClientesAsync();
         }
         catch (ArgumentException ex)
         {
-            _notificationService.MostrarAdvertencia(ex.Message);
+            _notificationService.MostrarAdvertencia(
+                ex.Message);
         }
         catch (InvalidOperationException ex)
         {
-            _notificationService.MostrarAdvertencia(ex.Message);
+            _notificationService.MostrarAdvertencia(
+                ex.Message);
         }
         catch (Exception)
         {
@@ -305,7 +405,8 @@ public class ClientesViewModel : INotifyPropertyChanged
         {
             Procesando = true;
 
-            bool nuevoEstado = !ClienteSeleccionado.Activo;
+            bool nuevoEstado =
+                !ClienteSeleccionado.Activo;
 
             await _clienteService.CambiarEstadoAsync(
                 ClienteSeleccionado.Id,
@@ -315,14 +416,17 @@ public class ClientesViewModel : INotifyPropertyChanged
                 ? "Cliente activado correctamente."
                 : "Cliente desactivado correctamente.";
 
-            _notificationService.MostrarExito(mensaje);
+            _notificationService.MostrarExito(
+                mensaje);
 
             LimpiarFormulario();
-            await CargarAsync();
+
+            await CargarClientesAsync();
         }
         catch (InvalidOperationException ex)
         {
-            _notificationService.MostrarAdvertencia(ex.Message);
+            _notificationService.MostrarAdvertencia(
+                ex.Message);
         }
         catch (Exception)
         {
@@ -335,6 +439,13 @@ public class ClientesViewModel : INotifyPropertyChanged
         }
     }
 
+    private async Task LimpiarBusquedaAsync()
+    {
+        CriterioBusqueda = string.Empty;
+
+        await CargarClientesAsync();
+    }
+
     private void CargarSeleccionadoEnFormulario()
     {
         if (ClienteSeleccionado is null)
@@ -343,29 +454,41 @@ public class ClientesViewModel : INotifyPropertyChanged
         }
 
         Cedula = ClienteSeleccionado.Cedula;
-        NombreCompleto = ClienteSeleccionado.NombreCompleto;
+        NombreCompleto =
+            ClienteSeleccionado.NombreCompleto;
         Telefono = ClienteSeleccionado.Telefono;
-        CorreoElectronico = ClienteSeleccionado.CorreoElectronico;
-        FechaNacimiento = ClienteSeleccionado.FechaNacimiento;
-        TipoClienteId = ClienteSeleccionado.TipoClienteId;
+        CorreoElectronico =
+            ClienteSeleccionado.CorreoElectronico;
+        FechaNacimiento =
+            ClienteSeleccionado.FechaNacimiento;
+
+        TipoClienteSeleccionado =
+            TiposCliente.FirstOrDefault(tipo =>
+                tipo.Id ==
+                ClienteSeleccionado.TipoClienteId);
     }
 
     private void LimpiarFormulario()
     {
         ClienteSeleccionado = null;
+
         Cedula = string.Empty;
         NombreCompleto = string.Empty;
         Telefono = string.Empty;
         CorreoElectronico = string.Empty;
-        FechaNacimiento = DateTime.Today;
-        TipoClienteId = 0;
+
+        FechaNacimiento = null;
+
+        TipoClienteSeleccionado = null;
     }
 
     private void OnPropertyChanged(
-        [CallerMemberName] string? nombrePropiedad = null)
+        [CallerMemberName]
+        string? nombrePropiedad = null)
     {
         PropertyChanged?.Invoke(
             this,
-            new PropertyChangedEventArgs(nombrePropiedad));
+            new PropertyChangedEventArgs(
+                nombrePropiedad));
     }
 }

@@ -1,20 +1,27 @@
 ﻿using BlaxtorGym.src.BlaxtorGym.Domain.Entities;
 using BlaxtorGym.src.BlaxtorGym.Domain.Interfaces;
+using System.Text.RegularExpressions;
 
 namespace BlaxtorGym.src.BlaxtorGym.Application.Services;
 
 public class ClienteService
 {
     private readonly IClienteRepository _clienteRepository;
+    private readonly ITipoClienteRepository _tipoClienteRepository;
 
-    public ClienteService(IClienteRepository clienteRepository)
+    public ClienteService(
+        IClienteRepository clienteRepository,
+        ITipoClienteRepository tipoClienteRepository)
     {
         _clienteRepository = clienteRepository;
+        _tipoClienteRepository = tipoClienteRepository;
     }
 
-    public async Task<List<Cliente>> ObtenerTodosAsync()
+    public async Task<List<Cliente>> BuscarAsync(
+        string criterio)
     {
-        return await _clienteRepository.ObtenerTodosAsync();
+        return await _clienteRepository.BuscarAsync(
+            criterio ?? string.Empty);
     }
 
     public async Task<List<Cliente>> ObtenerActivosAsync()
@@ -32,14 +39,16 @@ public class ClienteService
         return await _clienteRepository.ObtenerPorIdAsync(id);
     }
 
-    public async Task<Cliente?> ObtenerPorCedulaAsync(string cedula)
+    public async Task<Cliente?> ObtenerPorCedulaAsync(
+        string cedula)
     {
         if (string.IsNullOrWhiteSpace(cedula))
         {
             return null;
         }
 
-        return await _clienteRepository.ObtenerPorCedulaAsync(cedula);
+        return await _clienteRepository
+            .ObtenerPorCedulaAsync(cedula.Trim());
     }
 
     public async Task CrearAsync(
@@ -47,7 +56,7 @@ public class ClienteService
         string nombreCompleto,
         string telefono,
         string correoElectronico,
-        DateTime fechaNacimiento,
+        DateTime? fechaNacimiento,
         int tipoClienteId)
     {
         cedula = NormalizarTexto(cedula);
@@ -61,13 +70,13 @@ public class ClienteService
         ValidarCorreo(correoElectronico);
         ValidarFechaNacimiento(fechaNacimiento);
 
-        if (tipoClienteId <= 0)
-        {
-            throw new ArgumentException(
-                "Debe seleccionar un tipo de cliente.");
-        }
+        TipoCliente tipoCliente =
+            await ObtenerTipoClienteValidoAsync(
+                tipoClienteId,
+                exigirActivo: true);
 
-        if (await _clienteRepository.ExisteCedulaAsync(cedula))
+        if (await _clienteRepository
+            .ExisteCedulaAsync(cedula))
         {
             throw new InvalidOperationException(
                 "Ya existe un cliente con esa cédula.");
@@ -79,10 +88,10 @@ public class ClienteService
             NombreCompleto = nombreCompleto,
             Telefono = telefono,
             CorreoElectronico = correoElectronico,
-            FechaNacimiento = fechaNacimiento,
+            FechaNacimiento = fechaNacimiento!.Value,
             FechaRegistro = DateTime.Now,
             Activo = true,
-            TipoClienteId = tipoClienteId
+            TipoClienteId = tipoCliente.Id
         };
 
         await _clienteRepository.AgregarAsync(cliente);
@@ -94,7 +103,7 @@ public class ClienteService
         string nombreCompleto,
         string telefono,
         string correoElectronico,
-        DateTime fechaNacimiento,
+        DateTime? fechaNacimiento,
         int tipoClienteId)
     {
         cedula = NormalizarTexto(cedula);
@@ -108,13 +117,8 @@ public class ClienteService
         ValidarCorreo(correoElectronico);
         ValidarFechaNacimiento(fechaNacimiento);
 
-        if (tipoClienteId <= 0)
-        {
-            throw new ArgumentException(
-                "Debe seleccionar un tipo de cliente.");
-        }
-
-        Cliente? cliente = await _clienteRepository.ObtenerPorIdAsync(id);
+        Cliente? cliente =
+            await _clienteRepository.ObtenerPorIdAsync(id);
 
         if (cliente is null)
         {
@@ -122,7 +126,14 @@ public class ClienteService
                 "El cliente no existe.");
         }
 
-        if (await _clienteRepository.ExisteCedulaAsync(cedula, id))
+        TipoCliente tipoCliente =
+            await ObtenerTipoClienteValidoAsync(
+                tipoClienteId,
+                exigirActivo:
+                    tipoClienteId != cliente.TipoClienteId);
+
+        if (await _clienteRepository
+            .ExisteCedulaAsync(cedula, id))
         {
             throw new InvalidOperationException(
                 "Ya existe otro cliente con esa cédula.");
@@ -132,15 +143,18 @@ public class ClienteService
         cliente.NombreCompleto = nombreCompleto;
         cliente.Telefono = telefono;
         cliente.CorreoElectronico = correoElectronico;
-        cliente.FechaNacimiento = fechaNacimiento;
-        cliente.TipoClienteId = tipoClienteId;
+        cliente.FechaNacimiento = fechaNacimiento!.Value;
+        cliente.TipoClienteId = tipoCliente.Id;
 
         await _clienteRepository.ActualizarAsync(cliente);
     }
 
-    public async Task CambiarEstadoAsync(int id, bool activo)
+    public async Task CambiarEstadoAsync(
+        int id,
+        bool activo)
     {
-        Cliente? cliente = await _clienteRepository.ObtenerPorIdAsync(id);
+        Cliente? cliente =
+            await _clienteRepository.ObtenerPorIdAsync(id);
 
         if (cliente is null)
         {
@@ -153,9 +167,39 @@ public class ClienteService
         await _clienteRepository.ActualizarAsync(cliente);
     }
 
+    private async Task<TipoCliente>
+        ObtenerTipoClienteValidoAsync(
+            int tipoClienteId,
+            bool exigirActivo)
+    {
+        if (tipoClienteId <= 0)
+        {
+            throw new ArgumentException(
+                "Debe seleccionar un tipo de cliente.");
+        }
+
+        TipoCliente? tipoCliente =
+            await _tipoClienteRepository
+                .ObtenerPorIdAsync(tipoClienteId);
+
+        if (tipoCliente is null)
+        {
+            throw new InvalidOperationException(
+                "El tipo de cliente seleccionado no existe.");
+        }
+
+        if (exigirActivo && !tipoCliente.Activo)
+        {
+            throw new InvalidOperationException(
+                "El tipo de cliente seleccionado está inactivo.");
+        }
+
+        return tipoCliente;
+    }
+
     private static string NormalizarTexto(string valor)
     {
-        return valor.Trim();
+        return valor?.Trim() ?? string.Empty;
     }
 
     private static void ValidarCedula(string cedula)
@@ -173,7 +217,8 @@ public class ClienteService
         }
     }
 
-    private static void ValidarNombreCompleto(string nombre)
+    private static void ValidarNombreCompleto(
+        string nombre)
     {
         if (string.IsNullOrWhiteSpace(nombre))
         {
@@ -188,7 +233,8 @@ public class ClienteService
         }
     }
 
-    private static void ValidarTelefono(string telefono)
+    private static void ValidarTelefono(
+        string telefono)
     {
         if (string.IsNullOrWhiteSpace(telefono))
         {
@@ -203,7 +249,8 @@ public class ClienteService
         }
     }
 
-    private static void ValidarCorreo(string correo)
+    private static void ValidarCorreo(
+        string correo)
     {
         if (string.IsNullOrWhiteSpace(correo))
         {
@@ -217,25 +264,36 @@ public class ClienteService
                 "El correo electrónico no puede superar los 150 caracteres.");
         }
 
-        if (!correo.Contains('@'))
+        const string patron =
+            @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+
+        if (!Regex.IsMatch(correo, patron))
         {
             throw new ArgumentException(
                 "El correo electrónico no tiene un formato válido.");
         }
     }
 
-    private static void ValidarFechaNacimiento(DateTime fechaNacimiento)
+    private static void ValidarFechaNacimiento(
+        DateTime? fechaNacimiento)
     {
-        if (fechaNacimiento == default)
+        if (!fechaNacimiento.HasValue)
         {
             throw new ArgumentException(
                 "La fecha de nacimiento es obligatoria.");
         }
 
-        if (fechaNacimiento > DateTime.Today)
+        if (fechaNacimiento.Value.Date >
+            DateTime.Today)
         {
             throw new ArgumentException(
                 "La fecha de nacimiento no puede ser futura.");
+        }
+
+        if (fechaNacimiento.Value.Year < 1900)
+        {
+            throw new ArgumentException(
+                "La fecha de nacimiento no es válida.");
         }
     }
 }

@@ -13,7 +13,8 @@ public partial class App : Application
 {
     private AppDbContext? _context;
 
-    protected override async void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(
+        StartupEventArgs e)
     {
         base.OnStartup(e);
 
@@ -25,7 +26,8 @@ public partial class App : Application
             new UsuarioRepository(_context);
 
         var autenticacionService =
-            new AutenticacionService(usuarioRepository);
+            new AutenticacionService(
+                usuarioRepository);
 
         INotificationService notificationService =
             new MessageBoxNotificationService();
@@ -34,7 +36,8 @@ public partial class App : Application
             new TipoClienteRepository(_context);
 
         var tipoClienteService =
-            new TipoClienteService(tipoClienteRepository);
+            new TipoClienteService(
+                tipoClienteRepository);
 
         var tipoClienteViewModel =
             new TipoClienteViewModel(
@@ -45,11 +48,14 @@ public partial class App : Application
             new ClienteRepository(_context);
 
         var clienteService =
-            new ClienteService(clienteRepository);
+            new ClienteService(
+                clienteRepository,
+                tipoClienteRepository);
 
         var clientesViewModel =
             new ClientesViewModel(
                 clienteService,
+                tipoClienteService,
                 notificationService);
 
         var loginViewModel =
@@ -68,7 +74,8 @@ public partial class App : Application
         loginWindow.Show();
     }
 
-    protected override void OnExit(ExitEventArgs e)
+    protected override void OnExit(
+        ExitEventArgs e)
     {
         _context?.Dispose();
 

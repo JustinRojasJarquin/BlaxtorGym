@@ -2,92 +2,165 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+	<Grid Margin="20">
 
-        <TextBlock Grid.Row="0"
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<TextBlock Grid.Row="0"
                    Text="Clientes"
                    FontSize="20"
                    Margin="0,0,0,15"/>
 
-        <StackPanel Grid.Row="1"
+		<!-- Formulario temporal funcional -->
+		<StackPanel Grid.Row="1"
                     Margin="0,0,0,15">
 
-            <TextBlock Text="Cédula"/>
-            <TextBox Text="{Binding Cedula, UpdateSourceTrigger=PropertyChanged}"
+			<TextBlock Text="Cédula"/>
+
+			<TextBox Text="{Binding Cedula,
+                                    UpdateSourceTrigger=PropertyChanged}"
                      Height="30"
                      Margin="0,0,0,10"/>
 
-            <TextBlock Text="Nombre completo"/>
-            <TextBox Text="{Binding NombreCompleto, UpdateSourceTrigger=PropertyChanged}"
+			<TextBlock Text="Nombre completo"/>
+
+			<TextBox Text="{Binding NombreCompleto,
+                                    UpdateSourceTrigger=PropertyChanged}"
                      Height="30"
                      Margin="0,0,0,10"/>
 
-            <TextBlock Text="Teléfono"/>
-            <TextBox Text="{Binding Telefono, UpdateSourceTrigger=PropertyChanged}"
+			<TextBlock Text="Teléfono"/>
+
+			<TextBox Text="{Binding Telefono,
+                                    UpdateSourceTrigger=PropertyChanged}"
                      Height="30"
                      Margin="0,0,0,10"/>
 
-            <TextBlock Text="Correo electrónico"/>
-            <TextBox Text="{Binding CorreoElectronico, UpdateSourceTrigger=PropertyChanged}"
+			<TextBlock Text="Correo electrónico"/>
+
+			<TextBox Text="{Binding CorreoElectronico,
+                                    UpdateSourceTrigger=PropertyChanged}"
                      Height="30"
                      Margin="0,0,0,10"/>
 
-            <TextBlock Text="Fecha de nacimiento"/>
-            <DatePicker SelectedDate="{Binding FechaNacimiento, UpdateSourceTrigger=PropertyChanged}"
+			<TextBlock Text="Fecha de nacimiento"/>
+
+			<DatePicker SelectedDate="{Binding FechaNacimiento,
+                                               UpdateSourceTrigger=PropertyChanged}"
                         Height="30"
                         Margin="0,0,0,10"/>
 
-            <TextBlock Text="Tipo de cliente"/>
-            <TextBox Text="{Binding TipoClienteId, UpdateSourceTrigger=PropertyChanged}"
-                     Height="30"
-                     Margin="0,0,0,10"/>
+			<TextBlock Text="Tipo de cliente"/>
 
-            <StackPanel Orientation="Horizontal">
-                <Button Content="Crear"
+			<ComboBox ItemsSource="{Binding TiposCliente}"
+                      SelectedItem="{Binding TipoClienteSeleccionado}"
+                      DisplayMemberPath="Nombre"
+                      Height="30"
+                      Margin="0,0,0,10"/>
+
+			<StackPanel Orientation="Horizontal">
+
+				<Button Content="Crear"
                         Width="100"
                         Height="30"
                         Margin="0,0,10,0"
                         Command="{Binding CrearCommand}"/>
 
-                <Button Content="Modificar"
+				<Button Content="Modificar"
                         Width="100"
                         Height="30"
                         Margin="0,0,10,0"
                         Command="{Binding ModificarCommand}"/>
 
-                <Button Content="Activar / Desactivar"
+				<Button Content="Activar / Desactivar"
                         Width="140"
                         Height="30"
                         Margin="0,0,10,0"
                         Command="{Binding ActivarDesactivarCommand}"/>
 
-                <Button Content="Limpiar"
+				<Button Content="Limpiar"
                         Width="100"
                         Height="30"
                         Command="{Binding LimpiarCommand}"/>
-            </StackPanel>
-        </StackPanel>
 
-        <DataGrid Grid.Row="2"
+			</StackPanel>
+
+		</StackPanel>
+
+		<!-- Búsqueda -->
+		<StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,10">
+
+			<TextBox Width="300"
+                     Height="30"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding CriterioBusqueda,
+                                    UpdateSourceTrigger=PropertyChanged}"/>
+
+			<Button Content="Buscar"
+                    Width="100"
+                    Height="30"
+                    Margin="10,0,0,0"
+                    Command="{Binding BuscarCommand}"/>
+
+			<Button Content="Mostrar todos"
+                    Width="120"
+                    Height="30"
+                    Margin="10,0,0,0"
+                    Command="{Binding LimpiarBusquedaCommand}"/>
+
+		</StackPanel>
+
+		<!-- Listado -->
+		<DataGrid Grid.Row="3"
                   ItemsSource="{Binding Clientes}"
                   SelectedItem="{Binding ClienteSeleccionado}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
-                  SelectionMode="Single">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
-                <DataGridTextColumn Header="Cédula" Binding="{Binding Cedula}" Width="120"/>
-                <DataGridTextColumn Header="Nombre" Binding="{Binding NombreCompleto}" Width="2*"/>
-                <DataGridTextColumn Header="Teléfono" Binding="{Binding Telefono}" Width="120"/>
-                <DataGridTextColumn Header="Correo" Binding="{Binding CorreoElectronico}" Width="2*"/>
-                <DataGridTextColumn Header="Tipo" Binding="{Binding TipoCliente.Nombre}" Width="150"/>
-                <DataGridCheckBoxColumn Header="Activo" Binding="{Binding Activo}" Width="100"/>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+                  SelectionMode="Single"
+                  EnableRowVirtualization="True"
+                  EnableColumnVirtualization="True">
+
+			<DataGrid.Columns>
+
+				<DataGridTextColumn Header="ID"
+                                    Binding="{Binding Id}"
+                                    Width="60"/>
+
+				<DataGridTextColumn Header="Cédula"
+                                    Binding="{Binding Cedula}"
+                                    Width="120"/>
+
+				<DataGridTextColumn Header="Nombre"
+                                    Binding="{Binding NombreCompleto}"
+                                    Width="2*"/>
+
+				<DataGridTextColumn Header="Teléfono"
+                                    Binding="{Binding Telefono}"
+                                    Width="120"/>
+
+				<DataGridTextColumn Header="Correo"
+                                    Binding="{Binding CorreoElectronico}"
+                                    Width="2*"/>
+
+				<DataGridTextColumn Header="Tipo"
+                                    Binding="{Binding TipoCliente.Nombre}"
+                                    Width="150"/>
+
+				<DataGridCheckBoxColumn Header="Activo"
+                                        Binding="{Binding Activo}"
+                                        Width="80"/>
+
+			</DataGrid.Columns>
+
+		</DataGrid>
+
+	</Grid>
+
 </UserControl>

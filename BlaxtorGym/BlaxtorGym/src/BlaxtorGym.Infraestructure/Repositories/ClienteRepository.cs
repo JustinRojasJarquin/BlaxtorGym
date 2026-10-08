@@ -14,12 +14,26 @@ public class ClienteRepository : IClienteRepository
         _context = context;
     }
 
-    public async Task<List<Cliente>> ObtenerTodosAsync()
+    public async Task<List<Cliente>> BuscarAsync(
+        string criterio,
+        int limite = 100)
     {
-        return await _context.Clientes
+        criterio = criterio.Trim();
+
+        IQueryable<Cliente> consulta = _context.Clientes
             .Include(cliente => cliente.TipoCliente)
-            .AsNoTracking()
+            .AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(criterio))
+        {
+            consulta = consulta.Where(cliente =>
+                cliente.Cedula.Contains(criterio) ||
+                cliente.NombreCompleto.Contains(criterio));
+        }
+
+        return await consulta
             .OrderBy(cliente => cliente.NombreCompleto)
+            .Take(limite)
             .ToListAsync();
     }
 
@@ -36,16 +50,18 @@ public class ClienteRepository : IClienteRepository
     public async Task<Cliente?> ObtenerPorIdAsync(int id)
     {
         return await _context.Clientes
-            .Include(cliente => cliente.TipoCliente)
-            .FirstOrDefaultAsync(cliente => cliente.Id == id);
+            .FirstOrDefaultAsync(cliente =>
+                cliente.Id == id);
     }
 
-    public async Task<Cliente?> ObtenerPorCedulaAsync(string cedula)
+    public async Task<Cliente?> ObtenerPorCedulaAsync(
+        string cedula)
     {
         string cedulaNormalizada = cedula.Trim();
 
         return await _context.Clientes
             .Include(cliente => cliente.TipoCliente)
+            .AsNoTracking()
             .FirstOrDefaultAsync(cliente =>
                 cliente.Cedula == cedulaNormalizada);
     }
@@ -59,7 +75,8 @@ public class ClienteRepository : IClienteRepository
         return await _context.Clientes
             .AnyAsync(cliente =>
                 cliente.Cedula == cedulaNormalizada &&
-                (!idExcluir.HasValue || cliente.Id != idExcluir.Value));
+                (!idExcluir.HasValue ||
+                 cliente.Id != idExcluir.Value));
     }
 
     public async Task AgregarAsync(Cliente cliente)
@@ -71,8 +88,6 @@ public class ClienteRepository : IClienteRepository
 
     public async Task ActualizarAsync(Cliente cliente)
     {
-        _context.Clientes.Update(cliente);
-
         await _context.SaveChangesAsync();
     }
 }
