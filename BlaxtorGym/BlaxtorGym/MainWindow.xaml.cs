@@ -6,19 +6,16 @@ namespace BlaxtorGym;
 
 public partial class MainWindow : Window
 {
-    private readonly TipoClienteViewModel
-        _tipoClienteViewModel;
-
-    private readonly ClientesViewModel
-        _clientesViewModel;
-
-    private readonly TipoMembresiaViewModel
-        _tipoMembresiaViewModel;
+    private readonly TipoClienteViewModel _tipoClienteViewModel;
+    private readonly ClientesViewModel _clientesViewModel;
+    private readonly TipoMembresiaViewModel _tipoMembresiaViewModel;
+    private readonly TarifasViewModel _tarifasViewModel;
 
     public MainWindow(
         TipoClienteViewModel tipoClienteViewModel,
         ClientesViewModel clientesViewModel,
-        TipoMembresiaViewModel tipoMembresiaViewModel)
+        TipoMembresiaViewModel tipoMembresiaViewModel,
+        TarifasViewModel tarifasViewModel)
     {
         InitializeComponent();
 
@@ -31,7 +28,10 @@ public partial class MainWindow : Window
         _tipoMembresiaViewModel =
             tipoMembresiaViewModel;
 
-        MostrarTiposMembresia();
+        _tarifasViewModel =
+            tarifasViewModel;
+
+        MostrarTarifas();
     }
 
     private void TipoCliente_Click(
@@ -56,13 +56,22 @@ public partial class MainWindow : Window
         object sender,
         RoutedEventArgs e)
     {
-        MostrarTiposMembresia();
-    }
-
-    private void MostrarTiposMembresia()
-    {
         ContenidoPrincipal.Content =
             new TipoMembresiaView(
                 _tipoMembresiaViewModel);
+    }
+
+    private void Tarifas_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        MostrarTarifas();
+    }
+
+    private void MostrarTarifas()
+    {
+        ContenidoPrincipal.Content =
+            new TarifasView(
+                _tarifasViewModel);
     }
 }

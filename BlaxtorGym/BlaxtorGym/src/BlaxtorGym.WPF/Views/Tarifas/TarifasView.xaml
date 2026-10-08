@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="BlaxtorGym.src.BlaxtorGym.WPF.Views.TarifasView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Margin="20">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Tarifas"
+                   FontSize="20"
+                   Margin="0,0,0,15"/>
+
+        <StackPanel Grid.Row="1"
+                    Margin="0,0,0,15">
+
+            <TextBlock Text="Tipo de cliente"/>
+
+            <ComboBox ItemsSource="{Binding TiposCliente}"
+                      SelectedItem="{Binding TipoClienteSeleccionado}"
+                      DisplayMemberPath="Nombre"
+                      Height="30"
+                      Margin="0,0,0,10"/>
+
+            <TextBlock Text="Tipo de membresía"/>
+
+            <ComboBox ItemsSource="{Binding TiposMembresia}"
+                      SelectedItem="{Binding TipoMembresiaSeleccionado}"
+                      DisplayMemberPath="Nombre"
+                      Height="30"
+                      Margin="0,0,0,10"/>
+
+            <TextBlock Text="Monto"/>
+
+            <TextBox Text="{Binding Monto,
+                                    UpdateSourceTrigger=PropertyChanged}"
+                     Height="30"
+                     Margin="0,0,0,10"/>
+
+            <StackPanel Orientation="Horizontal">
+
+                <Button Content="Crear tarifa"
+                        Width="110"
+                        Height="30"
+                        Margin="0,0,10,0"
+                        Command="{Binding CrearCommand}"/>
+
+                <Button Content="Cambiar tarifa"
+                        Width="120"
+                        Height="30"
+                        Margin="0,0,10,0"
+                        Command="{Binding CambiarTarifaCommand}"/>
+
+                <Button Content="Desactivar"
+                        Width="100"
+                        Height="30"
+                        Margin="0,0,10,0"
+                        Command="{Binding DesactivarCommand}"/>
+
+                <Button Content="Limpiar"
+                        Width="100"
+                        Height="30"
+                        Command="{Binding LimpiarCommand}"/>
+
+            </StackPanel>
+
+        </StackPanel>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Tarifas}"
+                  SelectedItem="{Binding TarifaSeleccionada}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  EnableRowVirtualization="True"
+                  EnableColumnVirtualization="True">
+
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="ID"
+                                    Binding="{Binding Id}"
+                                    Width="60"/>
+
+                <DataGridTextColumn Header="Tipo Cliente"
+                                    Binding="{Binding TipoCliente.Nombre}"
+                                    Width="*"/>
+
+                <DataGridTextColumn Header="Membresía"
+                                    Binding="{Binding TipoMembresia.Nombre}"
+                                    Width="*"/>
+
+                <DataGridTextColumn Header="Monto"
+                                    Binding="{Binding Monto}"
+                                    Width="120"/>
+
+                <DataGridTextColumn Header="Inicio vigencia"
+                                    Binding="{Binding FechaInicioVigencia}"
+                                    Width="150"/>
+
+                <DataGridTextColumn Header="Fin vigencia"
+                                    Binding="{Binding FechaFinVigencia}"
+                                    Width="150"/>
+
+                <DataGridCheckBoxColumn Header="Activo"
+                                        Binding="{Binding Activo}"
+                                        Width="80"/>
+
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+    </Grid>
+
+</UserControl>

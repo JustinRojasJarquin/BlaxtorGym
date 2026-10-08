@@ -22,16 +22,8 @@ public partial class App : Application
 
         _context = new AppDbContext();
 
-        // -------------------------
-        // Notificaciones
-        // -------------------------
-
         INotificationService notificationService =
             new MessageBoxNotificationService();
-
-        // -------------------------
-        // Login
-        // -------------------------
 
         var usuarioRepository =
             new UsuarioRepository(_context);
@@ -45,10 +37,6 @@ public partial class App : Application
                 autenticacionService,
                 notificationService);
 
-        // -------------------------
-        // Tipos de cliente
-        // -------------------------
-
         var tipoClienteRepository =
             new TipoClienteRepository(_context);
 
@@ -60,10 +48,6 @@ public partial class App : Application
             new TipoClienteViewModel(
                 tipoClienteService,
                 notificationService);
-
-        // -------------------------
-        // Clientes
-        // -------------------------
 
         IClienteRepository clienteRepository =
             new ClienteRepository(_context);
@@ -79,10 +63,6 @@ public partial class App : Application
                 tipoClienteService,
                 notificationService);
 
-        // -------------------------
-        // Tipos de membresía
-        // -------------------------
-
         var tipoMembresiaRepository =
             new TipoMembresiaRepository(_context);
 
@@ -95,16 +75,29 @@ public partial class App : Application
                 tipoMembresiaService,
                 notificationService);
 
-        // -------------------------
-        // Ventana de Login
-        // -------------------------
+        var precioRepository =
+            new PrecioRepository(_context);
+
+        var tarifaService =
+            new TarifaService(
+                precioRepository,
+                tipoClienteRepository,
+                tipoMembresiaRepository);
+
+        var tarifasViewModel =
+            new TarifasViewModel(
+                tarifaService,
+                tipoClienteService,
+                tipoMembresiaService,
+                notificationService);
 
         var loginWindow =
             new LoginWindow(
                 loginViewModel,
                 tipoClienteViewModel,
                 clientesViewModel,
-                tipoMembresiaViewModel);
+                tipoMembresiaViewModel,
+                tarifasViewModel);
 
         MainWindow = loginWindow;
 

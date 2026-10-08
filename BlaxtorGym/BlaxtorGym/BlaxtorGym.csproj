@@ -11,7 +11,6 @@
   <ItemGroup>
     <Folder Include="src\BlaxtorGym.WPF\Resources\" />
     <Folder Include="src\BlaxtorGym.WPF\Views\Clientes\" />
-    <Folder Include="src\BlaxtorGym.WPF\Views\Membresias\" />
     <Folder Include="src\BlaxtorGym.WPF\Views\Mediciones\" />
     <Folder Include="src\BlaxtorGym.WPF\Views\Configuracion\" />
     <Folder Include="src\BlaxtorGym.WPF\Views\Reportes\" />

@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="BlaxtorGym.Tests/BlaxtorGym.Tests.csproj" Id="2c1ddee6-a308-4520-887f-28a3bd62cf02" />
   <Project Path="BlaxtorGym/BlaxtorGym.csproj" />
 </Solution>
