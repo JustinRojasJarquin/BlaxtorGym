@@ -6,39 +6,63 @@ namespace BlaxtorGym;
 
 public partial class MainWindow : Window
 {
-    private readonly TipoClienteViewModel _tipoClienteViewModel;
-    private readonly ClientesViewModel _clientesViewModel;
+    private readonly TipoClienteViewModel
+        _tipoClienteViewModel;
+
+    private readonly ClientesViewModel
+        _clientesViewModel;
+
+    private readonly TipoMembresiaViewModel
+        _tipoMembresiaViewModel;
 
     public MainWindow(
         TipoClienteViewModel tipoClienteViewModel,
-        ClientesViewModel clientesViewModel)
+        ClientesViewModel clientesViewModel,
+        TipoMembresiaViewModel tipoMembresiaViewModel)
     {
         InitializeComponent();
 
-        _tipoClienteViewModel = tipoClienteViewModel;
-        _clientesViewModel = clientesViewModel;
+        _tipoClienteViewModel =
+            tipoClienteViewModel;
 
-        MostrarTiposCliente();
+        _clientesViewModel =
+            clientesViewModel;
+
+        _tipoMembresiaViewModel =
+            tipoMembresiaViewModel;
+
+        MostrarTiposMembresia();
     }
 
-    private void MostrarTiposCliente_Click(
-        object sender,
-        RoutedEventArgs e)
-    {
-        MostrarTiposCliente();
-    }
-
-    private void MostrarClientes_Click(
+    private void TipoCliente_Click(
         object sender,
         RoutedEventArgs e)
     {
         ContenidoPrincipal.Content =
-            new ClientesView(_clientesViewModel);
+            new TipoClienteView(
+                _tipoClienteViewModel);
     }
 
-    private void MostrarTiposCliente()
+    private void Clientes_Click(
+        object sender,
+        RoutedEventArgs e)
     {
         ContenidoPrincipal.Content =
-            new TipoClienteView(_tipoClienteViewModel);
+            new ClientesView(
+                _clientesViewModel);
+    }
+
+    private void TipoMembresia_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        MostrarTiposMembresia();
+    }
+
+    private void MostrarTiposMembresia()
+    {
+        ContenidoPrincipal.Content =
+            new TipoMembresiaView(
+                _tipoMembresiaViewModel);
     }
 }

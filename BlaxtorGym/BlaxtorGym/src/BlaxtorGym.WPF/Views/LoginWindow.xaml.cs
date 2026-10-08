@@ -7,23 +7,34 @@ namespace BlaxtorGym.src.BlaxtorGym.WPF.Views;
 public partial class LoginWindow : Window
 {
     private readonly LoginViewModel _loginViewModel;
-    private readonly TipoClienteViewModel _tipoClienteViewModel;
-    private readonly ClientesViewModel _clientesViewModel;
+
+    private readonly TipoClienteViewModel
+        _tipoClienteViewModel;
+
+    private readonly ClientesViewModel
+        _clientesViewModel;
+
+    private readonly TipoMembresiaViewModel
+        _tipoMembresiaViewModel;
 
     public LoginWindow(
         LoginViewModel loginViewModel,
         TipoClienteViewModel tipoClienteViewModel,
-        ClientesViewModel clientesViewModel)
+        ClientesViewModel clientesViewModel,
+        TipoMembresiaViewModel tipoMembresiaViewModel)
     {
         InitializeComponent();
 
         _loginViewModel = loginViewModel;
         _tipoClienteViewModel = tipoClienteViewModel;
         _clientesViewModel = clientesViewModel;
+        _tipoMembresiaViewModel =
+            tipoMembresiaViewModel;
 
         DataContext = _loginViewModel;
 
-        _loginViewModel.LoginExitoso += AbrirVentanaPrincipal;
+        _loginViewModel.LoginExitoso +=
+            AbrirVentanaPrincipal;
     }
 
     private void PasswordBox_PasswordChanged(
@@ -32,7 +43,8 @@ public partial class LoginWindow : Window
     {
         if (sender is PasswordBox passwordBox)
         {
-            _loginViewModel.Contrasena = passwordBox.Password;
+            _loginViewModel.Contrasena =
+                passwordBox.Password;
         }
     }
 
@@ -41,7 +53,8 @@ public partial class LoginWindow : Window
         var ventanaPrincipal =
             new MainWindow(
                 _tipoClienteViewModel,
-                _clientesViewModel);
+                _clientesViewModel,
+                _tipoMembresiaViewModel);
 
         System.Windows.Application.Current.MainWindow =
             ventanaPrincipal;
@@ -53,7 +66,8 @@ public partial class LoginWindow : Window
 
     protected override void OnClosed(EventArgs e)
     {
-        _loginViewModel.LoginExitoso -= AbrirVentanaPrincipal;
+        _loginViewModel.LoginExitoso -=
+            AbrirVentanaPrincipal;
 
         base.OnClosed(e);
     }

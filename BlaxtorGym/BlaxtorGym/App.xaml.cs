@@ -22,6 +22,17 @@ public partial class App : Application
 
         _context = new AppDbContext();
 
+        // -------------------------
+        // Notificaciones
+        // -------------------------
+
+        INotificationService notificationService =
+            new MessageBoxNotificationService();
+
+        // -------------------------
+        // Login
+        // -------------------------
+
         var usuarioRepository =
             new UsuarioRepository(_context);
 
@@ -29,8 +40,14 @@ public partial class App : Application
             new AutenticacionService(
                 usuarioRepository);
 
-        INotificationService notificationService =
-            new MessageBoxNotificationService();
+        var loginViewModel =
+            new LoginViewModel(
+                autenticacionService,
+                notificationService);
+
+        // -------------------------
+        // Tipos de cliente
+        // -------------------------
 
         var tipoClienteRepository =
             new TipoClienteRepository(_context);
@@ -43,6 +60,10 @@ public partial class App : Application
             new TipoClienteViewModel(
                 tipoClienteService,
                 notificationService);
+
+        // -------------------------
+        // Clientes
+        // -------------------------
 
         IClienteRepository clienteRepository =
             new ClienteRepository(_context);
@@ -58,16 +79,32 @@ public partial class App : Application
                 tipoClienteService,
                 notificationService);
 
-        var loginViewModel =
-            new LoginViewModel(
-                autenticacionService,
+        // -------------------------
+        // Tipos de membresía
+        // -------------------------
+
+        var tipoMembresiaRepository =
+            new TipoMembresiaRepository(_context);
+
+        var tipoMembresiaService =
+            new TipoMembresiaService(
+                tipoMembresiaRepository);
+
+        var tipoMembresiaViewModel =
+            new TipoMembresiaViewModel(
+                tipoMembresiaService,
                 notificationService);
+
+        // -------------------------
+        // Ventana de Login
+        // -------------------------
 
         var loginWindow =
             new LoginWindow(
                 loginViewModel,
                 tipoClienteViewModel,
-                clientesViewModel);
+                clientesViewModel,
+                tipoMembresiaViewModel);
 
         MainWindow = loginWindow;
 
