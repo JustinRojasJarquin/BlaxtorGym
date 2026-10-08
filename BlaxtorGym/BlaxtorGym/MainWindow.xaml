@@ -7,9 +7,25 @@
         WindowStartupLocation="CenterScreen">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-        <ContentControl x:Name="ContenidoPrincipal"/>
+        <StackPanel Grid.Row="0"
+                    Orientation="Horizontal"
+                    Margin="12">
+            <Button Content="Tipos de Cliente"
+                    Margin="0,0,8,0"
+                    Padding="12,6"
+                    Click="MostrarTiposCliente_Click"/>
+            <Button Content="Clientes"
+                    Padding="12,6"
+                    Click="MostrarClientes_Click"/>
+        </StackPanel>
 
+        <ContentControl x:Name="ContenidoPrincipal"
+                        Grid.Row="1"/>
     </Grid>
 
 </Window>

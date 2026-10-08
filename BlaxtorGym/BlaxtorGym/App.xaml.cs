@@ -1,4 +1,5 @@
 ﻿using BlaxtorGym.src.BlaxtorGym.Application.Services;
+using BlaxtorGym.src.BlaxtorGym.Domain.Interfaces;
 using BlaxtorGym.src.BlaxtorGym.Infraestructure.Data;
 using BlaxtorGym.src.BlaxtorGym.Infraestructure.Repositories;
 using BlaxtorGym.src.BlaxtorGym.WPF.Notifications;
@@ -40,6 +41,17 @@ public partial class App : Application
                 tipoClienteService,
                 notificationService);
 
+        IClienteRepository clienteRepository =
+            new ClienteRepository(_context);
+
+        var clienteService =
+            new ClienteService(clienteRepository);
+
+        var clientesViewModel =
+            new ClientesViewModel(
+                clienteService,
+                notificationService);
+
         var loginViewModel =
             new LoginViewModel(
                 autenticacionService,
@@ -48,7 +60,8 @@ public partial class App : Application
         var loginWindow =
             new LoginWindow(
                 loginViewModel,
-                tipoClienteViewModel);
+                tipoClienteViewModel,
+                clientesViewModel);
 
         MainWindow = loginWindow;
 

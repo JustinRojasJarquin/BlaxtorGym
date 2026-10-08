@@ -8,15 +8,18 @@ public partial class LoginWindow : Window
 {
     private readonly LoginViewModel _loginViewModel;
     private readonly TipoClienteViewModel _tipoClienteViewModel;
+    private readonly ClientesViewModel _clientesViewModel;
 
     public LoginWindow(
         LoginViewModel loginViewModel,
-        TipoClienteViewModel tipoClienteViewModel)
+        TipoClienteViewModel tipoClienteViewModel,
+        ClientesViewModel clientesViewModel)
     {
         InitializeComponent();
 
         _loginViewModel = loginViewModel;
         _tipoClienteViewModel = tipoClienteViewModel;
+        _clientesViewModel = clientesViewModel;
 
         DataContext = _loginViewModel;
 
@@ -36,7 +39,9 @@ public partial class LoginWindow : Window
     private void AbrirVentanaPrincipal()
     {
         var ventanaPrincipal =
-            new MainWindow(_tipoClienteViewModel);
+            new MainWindow(
+                _tipoClienteViewModel,
+                _clientesViewModel);
 
         System.Windows.Application.Current.MainWindow =
             ventanaPrincipal;

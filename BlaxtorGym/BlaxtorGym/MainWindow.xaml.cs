@@ -6,15 +6,39 @@ namespace BlaxtorGym;
 
 public partial class MainWindow : Window
 {
+    private readonly TipoClienteViewModel _tipoClienteViewModel;
+    private readonly ClientesViewModel _clientesViewModel;
+
     public MainWindow(
-        TipoClienteViewModel tipoClienteViewModel)
+        TipoClienteViewModel tipoClienteViewModel,
+        ClientesViewModel clientesViewModel)
     {
         InitializeComponent();
 
-        var tipoClienteView =
-            new TipoClienteView(tipoClienteViewModel);
+        _tipoClienteViewModel = tipoClienteViewModel;
+        _clientesViewModel = clientesViewModel;
 
+        MostrarTiposCliente();
+    }
+
+    private void MostrarTiposCliente_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        MostrarTiposCliente();
+    }
+
+    private void MostrarClientes_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
         ContenidoPrincipal.Content =
-            tipoClienteView;
+            new ClientesView(_clientesViewModel);
+    }
+
+    private void MostrarTiposCliente()
+    {
+        ContenidoPrincipal.Content =
+            new TipoClienteView(_tipoClienteViewModel);
     }
 }

@@ -1,5 +1,93 @@
-<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<UserControl x:Class="BlaxtorGym.src.BlaxtorGym.WPF.Views.ClientesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Clientes"
+                   FontSize="20"
+                   Margin="0,0,0,15"/>
+
+        <StackPanel Grid.Row="1"
+                    Margin="0,0,0,15">
+
+            <TextBlock Text="Cédula"/>
+            <TextBox Text="{Binding Cedula, UpdateSourceTrigger=PropertyChanged}"
+                     Height="30"
+                     Margin="0,0,0,10"/>
+
+            <TextBlock Text="Nombre completo"/>
+            <TextBox Text="{Binding NombreCompleto, UpdateSourceTrigger=PropertyChanged}"
+                     Height="30"
+                     Margin="0,0,0,10"/>
+
+            <TextBlock Text="Teléfono"/>
+            <TextBox Text="{Binding Telefono, UpdateSourceTrigger=PropertyChanged}"
+                     Height="30"
+                     Margin="0,0,0,10"/>
+
+            <TextBlock Text="Correo electrónico"/>
+            <TextBox Text="{Binding CorreoElectronico, UpdateSourceTrigger=PropertyChanged}"
+                     Height="30"
+                     Margin="0,0,0,10"/>
+
+            <TextBlock Text="Fecha de nacimiento"/>
+            <DatePicker SelectedDate="{Binding FechaNacimiento, UpdateSourceTrigger=PropertyChanged}"
+                        Height="30"
+                        Margin="0,0,0,10"/>
+
+            <TextBlock Text="Tipo de cliente"/>
+            <TextBox Text="{Binding TipoClienteId, UpdateSourceTrigger=PropertyChanged}"
+                     Height="30"
+                     Margin="0,0,0,10"/>
+
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Crear"
+                        Width="100"
+                        Height="30"
+                        Margin="0,0,10,0"
+                        Command="{Binding CrearCommand}"/>
+
+                <Button Content="Modificar"
+                        Width="100"
+                        Height="30"
+                        Margin="0,0,10,0"
+                        Command="{Binding ModificarCommand}"/>
+
+                <Button Content="Activar / Desactivar"
+                        Width="140"
+                        Height="30"
+                        Margin="0,0,10,0"
+                        Command="{Binding ActivarDesactivarCommand}"/>
+
+                <Button Content="Limpiar"
+                        Width="100"
+                        Height="30"
+                        Command="{Binding LimpiarCommand}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding Clientes}"
+                  SelectedItem="{Binding ClienteSeleccionado}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
+                <DataGridTextColumn Header="Cédula" Binding="{Binding Cedula}" Width="120"/>
+                <DataGridTextColumn Header="Nombre" Binding="{Binding NombreCompleto}" Width="2*"/>
+                <DataGridTextColumn Header="Teléfono" Binding="{Binding Telefono}" Width="120"/>
+                <DataGridTextColumn Header="Correo" Binding="{Binding CorreoElectronico}" Width="2*"/>
+                <DataGridTextColumn Header="Tipo" Binding="{Binding TipoCliente.Nombre}" Width="150"/>
+                <DataGridCheckBoxColumn Header="Activo" Binding="{Binding Activo}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </UserControl>
