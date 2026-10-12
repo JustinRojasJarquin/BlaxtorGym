@@ -5,6 +5,7 @@ using BlaxtorGym.src.BlaxtorGym.Infraestructure.Repositories;
 using BlaxtorGym.src.BlaxtorGym.WPF.Notifications;
 using BlaxtorGym.src.BlaxtorGym.WPF.ViewModels;
 using BlaxtorGym.src.BlaxtorGym.WPF.Views;
+using System.Net.Http;
 using System.Windows;
 
 namespace BlaxtorGym;
@@ -12,6 +13,7 @@ namespace BlaxtorGym;
 public partial class App : Application
 {
     private AppDbContext? _context;
+    private HttpClient? _httpClient;
 
     protected override async void OnStartup(
         StartupEventArgs e)
@@ -22,10 +24,18 @@ public partial class App : Application
 
         _context = new AppDbContext();
 
+        _httpClient = new HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(10)
+        };
+
         INotificationService notificationService =
             new MessageBoxNotificationService();
 
-        // Login
+        // =========================================
+        // LOGIN
+        // =========================================
+
         var usuarioRepository =
             new UsuarioRepository(_context);
 
@@ -38,7 +48,10 @@ public partial class App : Application
                 autenticacionService,
                 notificationService);
 
-        // Tipos de cliente
+        // =========================================
+        // TIPOS DE CLIENTE
+        // =========================================
+
         var tipoClienteRepository =
             new TipoClienteRepository(_context);
 
@@ -51,7 +64,10 @@ public partial class App : Application
                 tipoClienteService,
                 notificationService);
 
-        // Clientes
+        // =========================================
+        // CLIENTES
+        // =========================================
+
         IClienteRepository clienteRepository =
             new ClienteRepository(_context);
 
@@ -60,13 +76,21 @@ public partial class App : Application
                 clienteRepository,
                 tipoClienteRepository);
 
+        var consultaCedulaService =
+            new ConsultaCedulaService(
+                _httpClient);
+
         var clientesViewModel =
             new ClientesViewModel(
                 clienteService,
                 tipoClienteService,
+                consultaCedulaService,
                 notificationService);
 
-        // Tipos de membresía
+        // =========================================
+        // TIPOS DE MEMBRESÍA
+        // =========================================
+
         var tipoMembresiaRepository =
             new TipoMembresiaRepository(_context);
 
@@ -79,7 +103,10 @@ public partial class App : Application
                 tipoMembresiaService,
                 notificationService);
 
-        // Tarifas
+        // =========================================
+        // TARIFAS
+        // =========================================
+
         var precioRepository =
             new PrecioRepository(_context);
 
@@ -96,7 +123,10 @@ public partial class App : Application
                 tipoMembresiaService,
                 notificationService);
 
-        // Membresías
+        // =========================================
+        // MEMBRESÍAS
+        // =========================================
+
         var membresiaRepository =
             new MembresiaRepository(_context);
 
@@ -111,10 +141,13 @@ public partial class App : Application
             new MembresiasViewModel(
                 membresiaService,
                 clienteService,
-                tipoMembresiaService,
+                tarifaService,
                 notificationService);
 
-        // Pagos
+        // =========================================
+        // PAGOS
+        // =========================================
+
         var pagoRepository =
             new PagoRepository(_context);
 
@@ -129,7 +162,10 @@ public partial class App : Application
                 membresiaService,
                 notificationService);
 
-        // Login
+        // =========================================
+        // LOGIN WINDOW
+        // =========================================
+
         var loginWindow =
             new LoginWindow(
                 loginViewModel,
@@ -148,6 +184,8 @@ public partial class App : Application
     protected override void OnExit(
         ExitEventArgs e)
     {
+        _httpClient?.Dispose();
+
         _context?.Dispose();
 
         base.OnExit(e);

@@ -1,4 +1,5 @@
-﻿using BlaxtorGym.src.BlaxtorGym.Application.Services;
+﻿using BlaxtorGym.src.BlaxtorGym.Application.DTOs;
+using BlaxtorGym.src.BlaxtorGym.Application.Services;
 using BlaxtorGym.src.BlaxtorGym.Domain.Entities;
 using BlaxtorGym.src.BlaxtorGym.WPF.Commands;
 using BlaxtorGym.src.BlaxtorGym.WPF.Notifications;
@@ -13,6 +14,7 @@ public class ClientesViewModel : INotifyPropertyChanged
 {
     private readonly ClienteService _clienteService;
     private readonly TipoClienteService _tipoClienteService;
+    private readonly ConsultaCedulaService _consultaCedulaService;
     private readonly INotificationService _notificationService;
 
     private Cliente? _clienteSeleccionado;
@@ -31,10 +33,12 @@ public class ClientesViewModel : INotifyPropertyChanged
     public ClientesViewModel(
         ClienteService clienteService,
         TipoClienteService tipoClienteService,
+        ConsultaCedulaService consultaCedulaService,
         INotificationService notificationService)
     {
         _clienteService = clienteService;
         _tipoClienteService = tipoClienteService;
+        _consultaCedulaService = consultaCedulaService;
         _notificationService = notificationService;
 
         CrearCommand = new RelayCommand(
@@ -57,6 +61,7 @@ public class ClientesViewModel : INotifyPropertyChanged
             _ =>
             {
                 LimpiarFormulario();
+
                 return Task.CompletedTask;
             },
             _ => !Procesando);
@@ -68,14 +73,19 @@ public class ClientesViewModel : INotifyPropertyChanged
         LimpiarBusquedaCommand = new RelayCommand(
             _ => LimpiarBusquedaAsync(),
             _ => !Procesando);
+
+        ConsultarCedulaCommand = new RelayCommand(
+            _ => ConsultarCedulaAsync(),
+            _ =>
+                !Procesando &&
+                !string.IsNullOrWhiteSpace(Cedula));
     }
 
     public ObservableCollection<Cliente> Clientes { get; }
         = new();
 
-    public ObservableCollection<TipoCliente>
-        TiposCliente
-    { get; } = new();
+    public ObservableCollection<TipoCliente> TiposCliente { get; }
+        = new();
 
     public Cliente? ClienteSeleccionado
     {
@@ -108,6 +118,7 @@ public class ClientesViewModel : INotifyPropertyChanged
             }
 
             _tipoClienteSeleccionado = value;
+
             OnPropertyChanged();
         }
     }
@@ -123,7 +134,10 @@ public class ClientesViewModel : INotifyPropertyChanged
             }
 
             _cedula = value;
+
             OnPropertyChanged();
+
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 
@@ -138,6 +152,7 @@ public class ClientesViewModel : INotifyPropertyChanged
             }
 
             _nombreCompleto = value;
+
             OnPropertyChanged();
         }
     }
@@ -153,6 +168,7 @@ public class ClientesViewModel : INotifyPropertyChanged
             }
 
             _telefono = value;
+
             OnPropertyChanged();
         }
     }
@@ -168,6 +184,7 @@ public class ClientesViewModel : INotifyPropertyChanged
             }
 
             _correoElectronico = value;
+
             OnPropertyChanged();
         }
     }
@@ -183,6 +200,7 @@ public class ClientesViewModel : INotifyPropertyChanged
             }
 
             _fechaNacimiento = value;
+
             OnPropertyChanged();
         }
     }
@@ -198,6 +216,7 @@ public class ClientesViewModel : INotifyPropertyChanged
             }
 
             _criterioBusqueda = value;
+
             OnPropertyChanged();
         }
     }
@@ -213,6 +232,7 @@ public class ClientesViewModel : INotifyPropertyChanged
             }
 
             _procesando = value;
+
             OnPropertyChanged();
 
             CommandManager.InvalidateRequerySuggested();
@@ -231,8 +251,9 @@ public class ClientesViewModel : INotifyPropertyChanged
 
     public ICommand LimpiarBusquedaCommand { get; }
 
-    public event PropertyChangedEventHandler?
-        PropertyChanged;
+    public ICommand ConsultarCedulaCommand { get; }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public async Task CargarAsync()
     {
@@ -241,12 +262,58 @@ public class ClientesViewModel : INotifyPropertyChanged
             Procesando = true;
 
             await CargarTiposClienteAsync();
+
             await CargarClientesAsync();
         }
         catch (Exception)
         {
             _notificationService.MostrarError(
                 "No fue posible cargar la información de clientes.");
+        }
+        finally
+        {
+            Procesando = false;
+        }
+    }
+
+    private async Task ConsultarCedulaAsync()
+    {
+        if (Procesando)
+        {
+            return;
+        }
+
+        try
+        {
+            Procesando = true;
+
+            ResultadoConsultaCedula resultado =
+                await _consultaCedulaService
+                    .ConsultarAsync(Cedula);
+
+            if (!resultado.Encontrado)
+            {
+                _notificationService.MostrarAdvertencia(
+                    resultado.Mensaje ??
+                    "No se encontró información para la cédula indicada.");
+
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(
+                    resultado.NombreCompleto))
+            {
+                NombreCompleto =
+                    resultado.NombreCompleto;
+            }
+
+            _notificationService.MostrarExito(
+                "Cédula encontrada. El nombre fue completado automáticamente.");
+        }
+        catch (Exception)
+        {
+            _notificationService.MostrarError(
+                "No fue posible consultar la cédula.");
         }
         finally
         {
@@ -453,19 +520,26 @@ public class ClientesViewModel : INotifyPropertyChanged
             return;
         }
 
-        Cedula = ClienteSeleccionado.Cedula;
+        Cedula =
+            ClienteSeleccionado.Cedula;
+
         NombreCompleto =
             ClienteSeleccionado.NombreCompleto;
-        Telefono = ClienteSeleccionado.Telefono;
+
+        Telefono =
+            ClienteSeleccionado.Telefono;
+
         CorreoElectronico =
             ClienteSeleccionado.CorreoElectronico;
+
         FechaNacimiento =
             ClienteSeleccionado.FechaNacimiento;
 
         TipoClienteSeleccionado =
-            TiposCliente.FirstOrDefault(tipo =>
-                tipo.Id ==
-                ClienteSeleccionado.TipoClienteId);
+            TiposCliente.FirstOrDefault(
+                tipo =>
+                    tipo.Id ==
+                    ClienteSeleccionado.TipoClienteId);
     }
 
     private void LimpiarFormulario()

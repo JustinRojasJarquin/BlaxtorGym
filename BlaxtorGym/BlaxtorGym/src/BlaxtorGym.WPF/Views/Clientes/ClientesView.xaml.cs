@@ -1,4 +1,5 @@
 using BlaxtorGym.src.BlaxtorGym.WPF.ViewModels;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace BlaxtorGym.src.BlaxtorGym.WPF.Views;
@@ -6,6 +7,7 @@ namespace BlaxtorGym.src.BlaxtorGym.WPF.Views;
 public partial class ClientesView : UserControl
 {
     private readonly ClientesViewModel _viewModel;
+    private bool _cargado;
 
     public ClientesView(
         ClientesViewModel viewModel)
@@ -13,6 +15,7 @@ public partial class ClientesView : UserControl
         InitializeComponent();
 
         _viewModel = viewModel;
+
         DataContext = _viewModel;
 
         Loaded += ClientesView_Loaded;
@@ -20,9 +23,14 @@ public partial class ClientesView : UserControl
 
     private async void ClientesView_Loaded(
         object sender,
-        System.Windows.RoutedEventArgs e)
+        RoutedEventArgs e)
     {
-        Loaded -= ClientesView_Loaded;
+        if (_cargado)
+        {
+            return;
+        }
+
+        _cargado = true;
 
         await _viewModel.CargarAsync();
     }

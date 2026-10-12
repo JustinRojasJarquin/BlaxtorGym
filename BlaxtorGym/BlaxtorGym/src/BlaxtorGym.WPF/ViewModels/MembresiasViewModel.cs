@@ -13,25 +13,28 @@ public class MembresiasViewModel : INotifyPropertyChanged
 {
     private readonly MembresiaService _membresiaService;
     private readonly ClienteService _clienteService;
-    private readonly TipoMembresiaService _tipoMembresiaService;
+    private readonly TarifaService _tarifaService;
     private readonly INotificationService _notificationService;
+
+    private readonly List<Precio> _tarifasActivas = new();
 
     private Membresia? _membresiaSeleccionada;
     private Cliente? _clienteSeleccionado;
     private TipoMembresia? _tipoMembresiaSeleccionado;
 
     private DateTime? _fechaInicio = DateTime.Today;
+
     private bool _procesando;
 
     public MembresiasViewModel(
         MembresiaService membresiaService,
         ClienteService clienteService,
-        TipoMembresiaService tipoMembresiaService,
+        TarifaService tarifaService,
         INotificationService notificationService)
     {
         _membresiaService = membresiaService;
         _clienteService = clienteService;
-        _tipoMembresiaService = tipoMembresiaService;
+        _tarifaService = tarifaService;
         _notificationService = notificationService;
 
         CrearCommand = new RelayCommand(
@@ -55,6 +58,7 @@ public class MembresiasViewModel : INotifyPropertyChanged
             _ =>
             {
                 LimpiarFormulario();
+
                 return Task.CompletedTask;
             },
             _ => !Procesando);
@@ -100,7 +104,12 @@ public class MembresiasViewModel : INotifyPropertyChanged
             }
 
             _clienteSeleccionado = value;
+
             OnPropertyChanged();
+
+            ActualizarTiposMembresiaDisponibles();
+
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 
@@ -115,7 +124,10 @@ public class MembresiasViewModel : INotifyPropertyChanged
             }
 
             _tipoMembresiaSeleccionado = value;
+
             OnPropertyChanged();
+
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 
@@ -130,6 +142,7 @@ public class MembresiasViewModel : INotifyPropertyChanged
             }
 
             _fechaInicio = value;
+
             OnPropertyChanged();
         }
     }
@@ -169,8 +182,12 @@ public class MembresiasViewModel : INotifyPropertyChanged
             Procesando = true;
 
             await CargarClientesAsync();
-            await CargarTiposMembresiaAsync();
+
+            await CargarTarifasAsync();
+
             await CargarMembresiasAsync();
+
+            TiposMembresia.Clear();
         }
         catch (Exception)
         {
@@ -196,19 +213,55 @@ public class MembresiasViewModel : INotifyPropertyChanged
         }
     }
 
-    private async Task CargarTiposMembresiaAsync()
+    private async Task CargarTarifasAsync()
     {
-        List<TipoMembresia> tipos =
-            await _tipoMembresiaService.ObtenerTodosAsync();
+        List<Precio> tarifas =
+            await _tarifaService.ObtenerTodosAsync();
+
+        _tarifasActivas.Clear();
+
+        foreach (Precio tarifa in tarifas)
+        {
+            if (tarifa.Activo &&
+                tarifa.TipoCliente is not null &&
+                tarifa.TipoMembresia is not null &&
+                tarifa.TipoCliente.Activo &&
+                tarifa.TipoMembresia.Activo)
+            {
+                _tarifasActivas.Add(tarifa);
+            }
+        }
+    }
+
+    private void ActualizarTiposMembresiaDisponibles()
+    {
+        TipoMembresiaSeleccionado = null;
 
         TiposMembresia.Clear();
 
-        foreach (TipoMembresia tipo in tipos)
+        if (ClienteSeleccionado is null)
         {
-            if (tipo.Activo)
-            {
-                TiposMembresia.Add(tipo);
-            }
+            return;
+        }
+
+        List<TipoMembresia> tiposDisponibles =
+            _tarifasActivas
+                .Where(tarifa =>
+                    tarifa.TipoClienteId ==
+                    ClienteSeleccionado.TipoClienteId)
+                .Select(tarifa =>
+                    tarifa.TipoMembresia)
+                .Where(tipo =>
+                    tipo is not null &&
+                    tipo.Activo)
+                .DistinctBy(tipo => tipo.Id)
+                .OrderBy(tipo => tipo.DuracionDias)
+                .ThenBy(tipo => tipo.Nombre)
+                .ToList();
+
+        foreach (TipoMembresia tipo in tiposDisponibles)
+        {
+            TiposMembresia.Add(tipo);
         }
     }
 
@@ -231,21 +284,27 @@ public class MembresiasViewModel : INotifyPropertyChanged
         {
             Procesando = true;
 
+            if (ClienteSeleccionado is null)
+            {
+                throw new ArgumentException(
+                    "Debe seleccionar un cliente.");
+            }
+
+            if (TipoMembresiaSeleccionado is null)
+            {
+                throw new ArgumentException(
+                    "Debe seleccionar un tipo de membresía disponible.");
+            }
+
             if (!FechaInicio.HasValue)
             {
                 throw new ArgumentException(
                     "Debe seleccionar una fecha de inicio.");
             }
 
-            int clienteId =
-                ClienteSeleccionado?.Id ?? 0;
-
-            int tipoMembresiaId =
-                TipoMembresiaSeleccionado?.Id ?? 0;
-
             await _membresiaService.CrearAsync(
-                clienteId,
-                tipoMembresiaId,
+                ClienteSeleccionado.Id,
+                TipoMembresiaSeleccionado.Id,
                 FechaInicio.Value);
 
             _notificationService.MostrarExito(
@@ -287,18 +346,21 @@ public class MembresiasViewModel : INotifyPropertyChanged
         {
             Procesando = true;
 
-            int tipoMembresiaId =
-                TipoMembresiaSeleccionado?.Id ?? 0;
-
-            if (tipoMembresiaId <= 0)
+            if (ClienteSeleccionado is null)
             {
                 throw new ArgumentException(
-                    "Debe seleccionar un tipo de membresía.");
+                    "Debe seleccionar un cliente.");
+            }
+
+            if (TipoMembresiaSeleccionado is null)
+            {
+                throw new ArgumentException(
+                    "Debe seleccionar un tipo de membresía disponible.");
             }
 
             await _membresiaService.RenovarAsync(
                 MembresiaSeleccionada.Id,
-                tipoMembresiaId);
+                TipoMembresiaSeleccionado.Id);
 
             _notificationService.MostrarExito(
                 "Membresía renovada correctamente.");
@@ -377,6 +439,10 @@ public class MembresiasViewModel : INotifyPropertyChanged
                 cliente.Id ==
                 MembresiaSeleccionada.ClienteId);
 
+        /*
+         * Al asignar ClienteSeleccionado se actualiza
+         * automáticamente TiposMembresia según sus tarifas.
+         */
         TipoMembresiaSeleccionado =
             TiposMembresia.FirstOrDefault(tipo =>
                 tipo.Id ==
@@ -388,11 +454,20 @@ public class MembresiasViewModel : INotifyPropertyChanged
 
     private void LimpiarFormulario()
     {
-        MembresiaSeleccionada = null;
-        ClienteSeleccionado = null;
-        TipoMembresiaSeleccionado = null;
+        _membresiaSeleccionada = null;
+        OnPropertyChanged(nameof(MembresiaSeleccionada));
+
+        _clienteSeleccionado = null;
+        OnPropertyChanged(nameof(ClienteSeleccionado));
+
+        _tipoMembresiaSeleccionado = null;
+        OnPropertyChanged(nameof(TipoMembresiaSeleccionado));
+
+        TiposMembresia.Clear();
 
         FechaInicio = DateTime.Today;
+
+        CommandManager.InvalidateRequerySuggested();
     }
 
     private void OnPropertyChanged(
