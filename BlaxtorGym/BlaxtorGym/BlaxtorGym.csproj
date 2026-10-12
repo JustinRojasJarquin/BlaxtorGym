@@ -15,7 +15,6 @@
     <Folder Include="src\BlaxtorGym.WPF\Views\Configuracion\" />
     <Folder Include="src\BlaxtorGym.WPF\Views\Reportes\" />
     <Folder Include="src\BlaxtorGym.WPF\Views\Notificaciones\" />
-    <Folder Include="src\BlaxtorGym.WPF\Views\Pagos\" />
   </ItemGroup>
 
   <ItemGroup>

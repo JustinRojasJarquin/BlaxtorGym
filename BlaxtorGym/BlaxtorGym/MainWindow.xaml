@@ -42,7 +42,12 @@
 
             <Button Content="Membresías"
                     Height="35"
+                    Margin="0,0,0,10"
                     Click="Membresias_Click"/>
+
+            <Button Content="Pagos"
+                    Height="35"
+                    Click="Pagos_Click"/>
 
         </StackPanel>
 

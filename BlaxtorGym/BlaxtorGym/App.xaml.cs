@@ -114,7 +114,22 @@ public partial class App : Application
                 tipoMembresiaService,
                 notificationService);
 
-        // LoginWindow
+        // Pagos
+        var pagoRepository =
+            new PagoRepository(_context);
+
+        var pagoService =
+            new PagoService(
+                pagoRepository,
+                membresiaRepository);
+
+        var pagosViewModel =
+            new PagosViewModel(
+                pagoService,
+                membresiaService,
+                notificationService);
+
+        // Login
         var loginWindow =
             new LoginWindow(
                 loginViewModel,
@@ -122,7 +137,8 @@ public partial class App : Application
                 clientesViewModel,
                 tipoMembresiaViewModel,
                 tarifasViewModel,
-                membresiasViewModel);
+                membresiasViewModel,
+                pagosViewModel);
 
         MainWindow = loginWindow;
 
