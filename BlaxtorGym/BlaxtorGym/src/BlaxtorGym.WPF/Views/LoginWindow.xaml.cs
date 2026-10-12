@@ -11,13 +11,15 @@ public partial class LoginWindow : Window
     private readonly ClientesViewModel _clientesViewModel;
     private readonly TipoMembresiaViewModel _tipoMembresiaViewModel;
     private readonly TarifasViewModel _tarifasViewModel;
+    private readonly MembresiasViewModel _membresiasViewModel;
 
     public LoginWindow(
         LoginViewModel loginViewModel,
         TipoClienteViewModel tipoClienteViewModel,
         ClientesViewModel clientesViewModel,
         TipoMembresiaViewModel tipoMembresiaViewModel,
-        TarifasViewModel tarifasViewModel)
+        TarifasViewModel tarifasViewModel,
+        MembresiasViewModel membresiasViewModel)
     {
         InitializeComponent();
 
@@ -26,6 +28,7 @@ public partial class LoginWindow : Window
         _clientesViewModel = clientesViewModel;
         _tipoMembresiaViewModel = tipoMembresiaViewModel;
         _tarifasViewModel = tarifasViewModel;
+        _membresiasViewModel = membresiasViewModel;
 
         DataContext = _loginViewModel;
 
@@ -51,7 +54,8 @@ public partial class LoginWindow : Window
                 _tipoClienteViewModel,
                 _clientesViewModel,
                 _tipoMembresiaViewModel,
-                _tarifasViewModel);
+                _tarifasViewModel,
+                _membresiasViewModel);
 
         System.Windows.Application.Current.MainWindow =
             ventanaPrincipal;
