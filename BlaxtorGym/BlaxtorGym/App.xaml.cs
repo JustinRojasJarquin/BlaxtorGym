@@ -1,10 +1,12 @@
 ﻿using BlaxtorGym.src.BlaxtorGym.Application.Services;
+using BlaxtorGym.src.BlaxtorGym.Application.Settings;
 using BlaxtorGym.src.BlaxtorGym.Domain.Interfaces;
 using BlaxtorGym.src.BlaxtorGym.Infraestructure.Data;
 using BlaxtorGym.src.BlaxtorGym.Infraestructure.Repositories;
 using BlaxtorGym.src.BlaxtorGym.WPF.Notifications;
 using BlaxtorGym.src.BlaxtorGym.WPF.ViewModels;
 using BlaxtorGym.src.BlaxtorGym.WPF.Views;
+using System.IO;
 using System.Net.Http;
 using System.Windows;
 
@@ -20,14 +22,39 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        await DatabaseInitializer.InicializarAsync();
+        await DatabaseInitializer
+            .InicializarAsync();
 
-        _context = new AppDbContext();
+        _context =
+            new AppDbContext();
 
-        _httpClient = new HttpClient
-        {
-            Timeout = TimeSpan.FromSeconds(10)
-        };
+        _httpClient =
+            new HttpClient
+            {
+                Timeout =
+                    TimeSpan.FromSeconds(10)
+            };
+
+        // =========================================
+        // CONFIGURACIÓN DE CORREO
+        // =========================================
+
+        string rutaEmailSettings =
+            Path.Combine(
+                AppContext.BaseDirectory,
+                "emailsettings.local.json");
+
+        EmailSettings emailSettings =
+            await EmailSettings.CargarAsync(
+                rutaEmailSettings);
+
+        var emailService =
+            new EmailService(
+                emailSettings);
+
+        // =========================================
+        // NOTIFICACIONES VISUALES
+        // =========================================
 
         INotificationService notificationService =
             new MessageBoxNotificationService();
@@ -37,7 +64,8 @@ public partial class App : Application
         // =========================================
 
         var usuarioRepository =
-            new UsuarioRepository(_context);
+            new UsuarioRepository(
+                _context);
 
         var autenticacionService =
             new AutenticacionService(
@@ -53,7 +81,8 @@ public partial class App : Application
         // =========================================
 
         var tipoClienteRepository =
-            new TipoClienteRepository(_context);
+            new TipoClienteRepository(
+                _context);
 
         var tipoClienteService =
             new TipoClienteService(
@@ -69,7 +98,8 @@ public partial class App : Application
         // =========================================
 
         IClienteRepository clienteRepository =
-            new ClienteRepository(_context);
+            new ClienteRepository(
+                _context);
 
         var clienteService =
             new ClienteService(
@@ -92,7 +122,8 @@ public partial class App : Application
         // =========================================
 
         var tipoMembresiaRepository =
-            new TipoMembresiaRepository(_context);
+            new TipoMembresiaRepository(
+                _context);
 
         var tipoMembresiaService =
             new TipoMembresiaService(
@@ -108,7 +139,8 @@ public partial class App : Application
         // =========================================
 
         var precioRepository =
-            new PrecioRepository(_context);
+            new PrecioRepository(
+                _context);
 
         var tarifaService =
             new TarifaService(
@@ -128,7 +160,8 @@ public partial class App : Application
         // =========================================
 
         var membresiaRepository =
-            new MembresiaRepository(_context);
+            new MembresiaRepository(
+                _context);
 
         var membresiaService =
             new MembresiaService(
@@ -149,7 +182,8 @@ public partial class App : Application
         // =========================================
 
         var pagoRepository =
-            new PagoRepository(_context);
+            new PagoRepository(
+                _context);
 
         var pagoService =
             new PagoService(
@@ -160,6 +194,25 @@ public partial class App : Application
             new PagosViewModel(
                 pagoService,
                 membresiaService,
+                notificationService);
+
+        // =========================================
+        // NOTIFICACIONES DE MEMBRESÍAS
+        // =========================================
+
+        var notificacionRepository =
+            new NotificacionRepository(
+                _context);
+
+        var notificacionService =
+            new NotificacionService(
+                notificacionRepository,
+                membresiaRepository,
+                emailService);
+
+        var notificacionesViewModel =
+            new NotificacionesViewModel(
+                notificacionService,
                 notificationService);
 
         // =========================================
@@ -174,9 +227,11 @@ public partial class App : Application
                 tipoMembresiaViewModel,
                 tarifasViewModel,
                 membresiasViewModel,
-                pagosViewModel);
+                pagosViewModel,
+                notificacionesViewModel);
 
-        MainWindow = loginWindow;
+        MainWindow =
+            loginWindow;
 
         loginWindow.Show();
     }

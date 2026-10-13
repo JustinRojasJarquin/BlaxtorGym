@@ -47,7 +47,12 @@
 
             <Button Content="Pagos"
                     Height="35"
+                    Margin="0,0,0,10"
                     Click="Pagos_Click"/>
+
+            <Button Content="Notificaciones"
+                    Height="35"
+                    Click="Notificaciones_Click"/>
 
         </StackPanel>
 

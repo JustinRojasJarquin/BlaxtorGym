@@ -13,6 +13,7 @@ public partial class LoginWindow : Window
     private readonly TarifasViewModel _tarifasViewModel;
     private readonly MembresiasViewModel _membresiasViewModel;
     private readonly PagosViewModel _pagosViewModel;
+    private readonly NotificacionesViewModel _notificacionesViewModel;
 
     public LoginWindow(
         LoginViewModel loginViewModel,
@@ -21,7 +22,8 @@ public partial class LoginWindow : Window
         TipoMembresiaViewModel tipoMembresiaViewModel,
         TarifasViewModel tarifasViewModel,
         MembresiasViewModel membresiasViewModel,
-        PagosViewModel pagosViewModel)
+        PagosViewModel pagosViewModel,
+        NotificacionesViewModel notificacionesViewModel)
     {
         InitializeComponent();
 
@@ -32,6 +34,7 @@ public partial class LoginWindow : Window
         _tarifasViewModel = tarifasViewModel;
         _membresiasViewModel = membresiasViewModel;
         _pagosViewModel = pagosViewModel;
+        _notificacionesViewModel = notificacionesViewModel;
 
         DataContext = _loginViewModel;
 
@@ -59,7 +62,8 @@ public partial class LoginWindow : Window
                 _tipoMembresiaViewModel,
                 _tarifasViewModel,
                 _membresiasViewModel,
-                _pagosViewModel);
+                _pagosViewModel,
+                _notificacionesViewModel);
 
         System.Windows.Application.Current.MainWindow =
             ventanaPrincipal;
@@ -69,7 +73,8 @@ public partial class LoginWindow : Window
         Close();
     }
 
-    protected override void OnClosed(EventArgs e)
+    protected override void OnClosed(
+        EventArgs e)
     {
         _loginViewModel.LoginExitoso -=
             AbrirVentanaPrincipal;

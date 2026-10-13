@@ -12,6 +12,7 @@ public partial class MainWindow : Window
     private readonly TarifasViewModel _tarifasViewModel;
     private readonly MembresiasViewModel _membresiasViewModel;
     private readonly PagosViewModel _pagosViewModel;
+    private readonly NotificacionesViewModel _notificacionesViewModel;
 
     public MainWindow(
         TipoClienteViewModel tipoClienteViewModel,
@@ -19,7 +20,8 @@ public partial class MainWindow : Window
         TipoMembresiaViewModel tipoMembresiaViewModel,
         TarifasViewModel tarifasViewModel,
         MembresiasViewModel membresiasViewModel,
-        PagosViewModel pagosViewModel)
+        PagosViewModel pagosViewModel,
+        NotificacionesViewModel notificacionesViewModel)
     {
         InitializeComponent();
 
@@ -41,7 +43,10 @@ public partial class MainWindow : Window
         _pagosViewModel =
             pagosViewModel;
 
-        MostrarPagos();
+        _notificacionesViewModel =
+            notificacionesViewModel;
+
+        MostrarNotificaciones();
     }
 
     private void TipoCliente_Click(
@@ -93,13 +98,22 @@ public partial class MainWindow : Window
         object sender,
         RoutedEventArgs e)
     {
-        MostrarPagos();
-    }
-
-    private void MostrarPagos()
-    {
         ContenidoPrincipal.Content =
             new PagosView(
                 _pagosViewModel);
+    }
+
+    private void Notificaciones_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        MostrarNotificaciones();
+    }
+
+    private void MostrarNotificaciones()
+    {
+        ContenidoPrincipal.Content =
+            new NotificacionesView(
+                _notificacionesViewModel);
     }
 }
