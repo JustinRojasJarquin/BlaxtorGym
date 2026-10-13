@@ -118,6 +118,25 @@ public partial class App : Application
                 notificationService);
 
         // =========================================
+        // MEDICIONES FÍSICAS
+        // =========================================
+
+        var medicionFisicaRepository =
+            new MedicionFisicaRepository(
+                _context);
+
+        var medicionFisicaService =
+            new MedicionFisicaService(
+                medicionFisicaRepository,
+                clienteRepository);
+
+        var medicionesViewModel =
+            new MedicionesViewModel(
+                clienteService,
+                medicionFisicaService,
+                notificationService);
+
+        // =========================================
         // TIPOS DE MEMBRESÍA
         // =========================================
 
@@ -224,6 +243,7 @@ public partial class App : Application
                 loginViewModel,
                 tipoClienteViewModel,
                 clientesViewModel,
+                medicionesViewModel,
                 tipoMembresiaViewModel,
                 tarifasViewModel,
                 membresiasViewModel,

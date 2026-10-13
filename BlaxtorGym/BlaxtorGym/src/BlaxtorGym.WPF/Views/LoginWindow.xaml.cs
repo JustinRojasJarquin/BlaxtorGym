@@ -10,6 +10,7 @@ public partial class LoginWindow : Window
     private readonly LoginViewModel _loginViewModel;
     private readonly TipoClienteViewModel _tipoClienteViewModel;
     private readonly ClientesViewModel _clientesViewModel;
+    private readonly MedicionesViewModel _medicionesViewModel;
     private readonly TipoMembresiaViewModel _tipoMembresiaViewModel;
     private readonly TarifasViewModel _tarifasViewModel;
     private readonly MembresiasViewModel _membresiasViewModel;
@@ -20,6 +21,7 @@ public partial class LoginWindow : Window
         LoginViewModel loginViewModel,
         TipoClienteViewModel tipoClienteViewModel,
         ClientesViewModel clientesViewModel,
+        MedicionesViewModel medicionesViewModel,
         TipoMembresiaViewModel tipoMembresiaViewModel,
         TarifasViewModel tarifasViewModel,
         MembresiasViewModel membresiasViewModel,
@@ -31,6 +33,7 @@ public partial class LoginWindow : Window
         _loginViewModel = loginViewModel;
         _tipoClienteViewModel = tipoClienteViewModel;
         _clientesViewModel = clientesViewModel;
+        _medicionesViewModel = medicionesViewModel;
         _tipoMembresiaViewModel = tipoMembresiaViewModel;
         _tarifasViewModel = tarifasViewModel;
         _membresiasViewModel = membresiasViewModel;
@@ -97,6 +100,7 @@ public partial class LoginWindow : Window
             new MainWindow(
                 _tipoClienteViewModel,
                 _clientesViewModel,
+                _medicionesViewModel,
                 _tipoMembresiaViewModel,
                 _tarifasViewModel,
                 _membresiasViewModel,

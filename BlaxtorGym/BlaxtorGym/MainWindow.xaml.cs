@@ -8,6 +8,7 @@ public partial class MainWindow : Window
 {
     private readonly TipoClienteViewModel _tipoClienteViewModel;
     private readonly ClientesViewModel _clientesViewModel;
+    private readonly MedicionesViewModel _medicionesViewModel;
     private readonly TipoMembresiaViewModel _tipoMembresiaViewModel;
     private readonly TarifasViewModel _tarifasViewModel;
     private readonly MembresiasViewModel _membresiasViewModel;
@@ -17,6 +18,7 @@ public partial class MainWindow : Window
     public MainWindow(
         TipoClienteViewModel tipoClienteViewModel,
         ClientesViewModel clientesViewModel,
+        MedicionesViewModel medicionesViewModel,
         TipoMembresiaViewModel tipoMembresiaViewModel,
         TarifasViewModel tarifasViewModel,
         MembresiasViewModel membresiasViewModel,
@@ -30,6 +32,9 @@ public partial class MainWindow : Window
 
         _clientesViewModel =
             clientesViewModel;
+
+        _medicionesViewModel =
+            medicionesViewModel;
 
         _tipoMembresiaViewModel =
             tipoMembresiaViewModel;
@@ -65,6 +70,15 @@ public partial class MainWindow : Window
         ContenidoPrincipal.Content =
             new ClientesView(
                 _clientesViewModel);
+    }
+
+    private void Mediciones_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        ContenidoPrincipal.Content =
+            new MedicionesView(
+                _medicionesViewModel);
     }
 
     private void TipoMembresia_Click(

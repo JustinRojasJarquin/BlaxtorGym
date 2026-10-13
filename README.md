@@ -28,11 +28,12 @@ Blaxtor Gym es un sistema de gestión de escritorio diseñado para ayudar a mant
 | **Acceso** | Inicio de sesión con validación de credenciales, contraseñas protegidas mediante hash y bloqueo temporal después de varios intentos fallidos. |
 | **Clientes** | Registro y edición de datos, consulta de clientes y activación o desactivación de registros. |
 | **Tipos de cliente** | Creación, edición y cambio de estado de categorías de clientes. |
+| **Mediciones físicas** | Registro de peso y datos físicos opcionales, con historial por cliente. |
 | **Datos locales** | Persistencia en SQLite y aplicación automática de migraciones al iniciar. |
 
 ### Módulos en desarrollo
 
-La estructura del proyecto también contempla membresías, pagos, mediciones físicas, notificaciones, reportes, tarifas y configuración. Estos módulos aún no están implementados como funcionalidades listas para uso.
+La estructura del proyecto también contempla membresías, pagos, notificaciones, reportes, tarifas y configuración. Estos módulos aún no están implementados como funcionalidades listas para uso.
 
 ---
 
