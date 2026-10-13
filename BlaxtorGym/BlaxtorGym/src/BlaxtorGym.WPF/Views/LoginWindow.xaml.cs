@@ -1,4 +1,5 @@
 ﻿using BlaxtorGym.src.BlaxtorGym.WPF.ViewModels;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -40,17 +41,54 @@ public partial class LoginWindow : Window
 
         _loginViewModel.LoginExitoso +=
             AbrirVentanaPrincipal;
+
+        Loaded += LoginWindow_Loaded;
+    }
+
+    private void LoginWindow_Loaded(
+        object sender,
+        RoutedEventArgs e)
+    {
+        ActualizarPlaceholderContrasena();
     }
 
     private void PasswordBox_PasswordChanged(
         object sender,
         RoutedEventArgs e)
     {
-        if (sender is PasswordBox passwordBox)
+        if (sender is not PasswordBox passwordBox)
         {
-            _loginViewModel.Contrasena =
-                passwordBox.Password;
+            return;
         }
+
+        _loginViewModel.Contrasena =
+            passwordBox.Password;
+
+        if (PasswordPlaceholder is null)
+        {
+            return;
+        }
+
+        PasswordPlaceholder.Visibility =
+            string.IsNullOrEmpty(
+                passwordBox.Password)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+    }
+
+    private void ActualizarPlaceholderContrasena()
+    {
+        if (PasswordPlaceholder is null ||
+            PasswordBox is null)
+        {
+            return;
+        }
+
+        PasswordPlaceholder.Visibility =
+            string.IsNullOrEmpty(
+                PasswordBox.Password)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
     }
 
     private void AbrirVentanaPrincipal()
@@ -78,6 +116,8 @@ public partial class LoginWindow : Window
     {
         _loginViewModel.LoginExitoso -=
             AbrirVentanaPrincipal;
+
+        Loaded -= LoginWindow_Loaded;
 
         base.OnClosed(e);
     }
