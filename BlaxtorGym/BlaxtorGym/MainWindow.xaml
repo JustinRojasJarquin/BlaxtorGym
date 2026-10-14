@@ -57,7 +57,13 @@
 
             <Button Content="Notificaciones"
                     Height="35"
+                    Margin="0,0,0,10"
                     Click="Notificaciones_Click"/>
+
+            <Button Content="Copias de seguridad"
+                    Height="35"
+                    Margin="0,0,0,10"
+                    Click="Configuracion_Click"/>
 
         </StackPanel>
 

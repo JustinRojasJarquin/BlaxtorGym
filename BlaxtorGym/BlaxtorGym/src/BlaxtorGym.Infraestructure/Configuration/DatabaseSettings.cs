@@ -4,19 +4,42 @@ namespace BlaxtorGym.src.BlaxtorGym.Infraestructure.Configuration;
 
 public static class DatabaseSettings
 {
+    private const string NombreBaseDatos =
+        "blaxtorgym.db";
+
     public static string ObtenerRutaBaseDatos()
     {
-        string carpetaDatos = Path.Combine(
-            AppContext.BaseDirectory,
-            "Data");
+        string localAppData =
+            Environment.GetFolderPath(
+                Environment.SpecialFolder.LocalApplicationData);
 
-        Directory.CreateDirectory(carpetaDatos);
+        string carpetaDatos =
+            Path.Combine(
+                localAppData,
+                "BlaxtorGym",
+                "Data");
 
-        return Path.Combine(carpetaDatos, "blaxtorgym.db");
+        Directory.CreateDirectory(
+            carpetaDatos);
+
+        return Path.Combine(
+            carpetaDatos,
+            NombreBaseDatos);
     }
 
     public static string ObtenerCadenaConexion()
     {
-        return $"Data Source={ObtenerRutaBaseDatos()}";
+        string ruta =
+            ObtenerRutaBaseDatos();
+
+        return $"Data Source={ruta}";
+    }
+
+    public static string ObtenerRutaBaseDatosAnterior()
+    {
+        return Path.Combine(
+            AppContext.BaseDirectory,
+            "Data",
+            NombreBaseDatos);
     }
 }

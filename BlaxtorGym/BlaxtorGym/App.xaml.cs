@@ -22,238 +22,293 @@ public partial class App : Application
     {
         base.OnStartup(e);
 
-        await DatabaseInitializer
-            .InicializarAsync();
+        try
+        {
+            // =========================================
+            // MIGRAR UBICACIÓN ANTIGUA DE LA BD
+            // =========================================
 
-        _context =
-            new AppDbContext();
+            var databaseLocationService =
+                new BlaxtorGym.src.BlaxtorGym
+                    .Infraestructure.Services.DatabaseLocationService();
 
-        _httpClient =
-            new HttpClient
-            {
-                Timeout =
-                    TimeSpan.FromSeconds(10)
-            };
+            await databaseLocationService
+                .MigrarBaseAnteriorSiEsNecesarioAsync();
 
-        // =========================================
-        // CONFIGURACIÓN DE CORREO
-        // =========================================
+            // =========================================
+            // BACKUP / RESTAURACIÓN PENDIENTE
+            // =========================================
 
-        string rutaEmailSettings =
-            Path.Combine(
-                AppContext.BaseDirectory,
-                "emailsettings.local.json");
+            var backupService =
+                new BlaxtorGym.src.BlaxtorGym
+                    .Infraestructure.Services.BackupService();
 
-        EmailSettings emailSettings =
-            await EmailSettings.CargarAsync(
-                rutaEmailSettings);
+            await backupService
+                .AplicarRestauracionPendienteAsync();
 
-        var emailService =
-            new EmailService(
-                emailSettings);
+            // =========================================
+            // BASE DE DATOS / EF CORE
+            // =========================================
 
-        // =========================================
-        // NOTIFICACIONES VISUALES
-        // =========================================
+            await DatabaseInitializer
+                .InicializarAsync();
 
-        INotificationService notificationService =
-            new MessageBoxNotificationService();
+            _context =
+                new AppDbContext();
 
-        // =========================================
-        // LOGIN
-        // =========================================
+            // =========================================
+            // HTTP
+            // =========================================
 
-        var usuarioRepository =
-            new UsuarioRepository(
-                _context);
+            _httpClient =
+                new HttpClient
+                {
+                    Timeout =
+                        TimeSpan.FromSeconds(10)
+                };
 
-        var autenticacionService =
-            new AutenticacionService(
-                usuarioRepository);
+            // =========================================
+            // CONFIGURACIÓN DE CORREO
+            // =========================================
 
-        var loginViewModel =
-            new LoginViewModel(
-                autenticacionService,
-                notificationService);
+            string rutaEmailSettings =
+                Path.Combine(
+                    AppContext.BaseDirectory,
+                    "emailsettings.local.json");
 
-        // =========================================
-        // TIPOS DE CLIENTE
-        // =========================================
+            EmailSettings emailSettings =
+                await EmailSettings
+                    .CargarAsync(
+                        rutaEmailSettings);
 
-        var tipoClienteRepository =
-            new TipoClienteRepository(
-                _context);
+            var emailService =
+                new EmailService(
+                    emailSettings);
 
-        var tipoClienteService =
-            new TipoClienteService(
-                tipoClienteRepository);
+            // =========================================
+            // NOTIFICACIONES VISUALES
+            // =========================================
 
-        var tipoClienteViewModel =
-            new TipoClienteViewModel(
-                tipoClienteService,
-                notificationService);
+            INotificationService notificationService =
+                new MessageBoxNotificationService();
 
-        // =========================================
-        // CLIENTES
-        // =========================================
+            // =========================================
+            // AUTENTICACIÓN
+            // =========================================
 
-        IClienteRepository clienteRepository =
-            new ClienteRepository(
-                _context);
+            var usuarioRepository =
+                new UsuarioRepository(
+                    _context);
 
-        var clienteService =
-            new ClienteService(
-                clienteRepository,
-                tipoClienteRepository);
+            var autenticacionService =
+                new AutenticacionService(
+                    usuarioRepository);
 
-        var consultaCedulaService =
-            new ConsultaCedulaService(
-                _httpClient);
+            var loginViewModel =
+                new LoginViewModel(
+                    autenticacionService,
+                    notificationService);
 
-        var clientesViewModel =
-            new ClientesViewModel(
-                clienteService,
-                tipoClienteService,
-                consultaCedulaService,
-                notificationService);
+            // =========================================
+            // TIPOS DE CLIENTE
+            // =========================================
 
-        // =========================================
-        // MEDICIONES FÍSICAS
-        // =========================================
+            var tipoClienteRepository =
+                new TipoClienteRepository(
+                    _context);
 
-        var medicionFisicaRepository =
-            new MedicionFisicaRepository(
-                _context);
+            var tipoClienteService =
+                new TipoClienteService(
+                    tipoClienteRepository);
 
-        var medicionFisicaService =
-            new MedicionFisicaService(
-                medicionFisicaRepository,
-                clienteRepository);
+            var tipoClienteViewModel =
+                new TipoClienteViewModel(
+                    tipoClienteService,
+                    notificationService);
 
-        var medicionesViewModel =
-            new MedicionesViewModel(
-                clienteService,
-                medicionFisicaService,
-                notificationService);
+            // =========================================
+            // CLIENTES
+            // =========================================
 
-        // =========================================
-        // TIPOS DE MEMBRESÍA
-        // =========================================
+            IClienteRepository clienteRepository =
+                new ClienteRepository(
+                    _context);
 
-        var tipoMembresiaRepository =
-            new TipoMembresiaRepository(
-                _context);
+            var clienteService =
+                new ClienteService(
+                    clienteRepository,
+                    tipoClienteRepository);
 
-        var tipoMembresiaService =
-            new TipoMembresiaService(
-                tipoMembresiaRepository);
+            var consultaCedulaService =
+                new ConsultaCedulaService(
+                    _httpClient);
 
-        var tipoMembresiaViewModel =
-            new TipoMembresiaViewModel(
-                tipoMembresiaService,
-                notificationService);
+            var clientesViewModel =
+                new ClientesViewModel(
+                    clienteService,
+                    tipoClienteService,
+                    consultaCedulaService,
+                    notificationService);
 
-        // =========================================
-        // TARIFAS
-        // =========================================
+            // =========================================
+            // MEDICIONES FÍSICAS
+            // =========================================
 
-        var precioRepository =
-            new PrecioRepository(
-                _context);
+            var medicionFisicaRepository =
+                new MedicionFisicaRepository(
+                    _context);
 
-        var tarifaService =
-            new TarifaService(
-                precioRepository,
-                tipoClienteRepository,
-                tipoMembresiaRepository);
+            var medicionFisicaService =
+                new MedicionFisicaService(
+                    medicionFisicaRepository,
+                    clienteRepository);
 
-        var tarifasViewModel =
-            new TarifasViewModel(
-                tarifaService,
-                tipoClienteService,
-                tipoMembresiaService,
-                notificationService);
+            var medicionesViewModel =
+                new MedicionesViewModel(
+                    clienteService,
+                    medicionFisicaService,
+                    notificationService);
 
-        // =========================================
-        // MEMBRESÍAS
-        // =========================================
+            // =========================================
+            // TIPOS DE MEMBRESÍA
+            // =========================================
 
-        var membresiaRepository =
-            new MembresiaRepository(
-                _context);
+            var tipoMembresiaRepository =
+                new TipoMembresiaRepository(
+                    _context);
 
-        var membresiaService =
-            new MembresiaService(
-                membresiaRepository,
-                clienteRepository,
-                tipoMembresiaRepository,
-                precioRepository);
+            var tipoMembresiaService =
+                new TipoMembresiaService(
+                    tipoMembresiaRepository);
 
-        var membresiasViewModel =
-            new MembresiasViewModel(
-                membresiaService,
-                clienteService,
-                tarifaService,
-                notificationService);
+            var tipoMembresiaViewModel =
+                new TipoMembresiaViewModel(
+                    tipoMembresiaService,
+                    notificationService);
 
-        // =========================================
-        // PAGOS
-        // =========================================
+            // =========================================
+            // TARIFAS
+            // =========================================
 
-        var pagoRepository =
-            new PagoRepository(
-                _context);
+            var precioRepository =
+                new PrecioRepository(
+                    _context);
 
-        var pagoService =
-            new PagoService(
-                pagoRepository,
-                membresiaRepository);
+            var tarifaService =
+                new TarifaService(
+                    precioRepository,
+                    tipoClienteRepository,
+                    tipoMembresiaRepository);
 
-        var pagosViewModel =
-            new PagosViewModel(
-                pagoService,
-                membresiaService,
-                notificationService);
+            var tarifasViewModel =
+                new TarifasViewModel(
+                    tarifaService,
+                    tipoClienteService,
+                    tipoMembresiaService,
+                    notificationService);
 
-        // =========================================
-        // NOTIFICACIONES DE MEMBRESÍAS
-        // =========================================
+            // =========================================
+            // MEMBRESÍAS
+            // =========================================
 
-        var notificacionRepository =
-            new NotificacionRepository(
-                _context);
+            var membresiaRepository =
+                new MembresiaRepository(
+                    _context);
 
-        var notificacionService =
-            new NotificacionService(
-                notificacionRepository,
-                membresiaRepository,
-                emailService);
+            var membresiaService =
+                new MembresiaService(
+                    membresiaRepository,
+                    clienteRepository,
+                    tipoMembresiaRepository,
+                    precioRepository);
 
-        var notificacionesViewModel =
-            new NotificacionesViewModel(
-                notificacionService,
-                notificationService);
+            var membresiasViewModel =
+                new MembresiasViewModel(
+                    membresiaService,
+                    clienteService,
+                    tarifaService,
+                    notificationService);
 
-        // =========================================
-        // LOGIN WINDOW
-        // =========================================
+            // =========================================
+            // PAGOS
+            // =========================================
 
-        var loginWindow =
-            new LoginWindow(
-                loginViewModel,
-                tipoClienteViewModel,
-                clientesViewModel,
-                medicionesViewModel,
-                tipoMembresiaViewModel,
-                tarifasViewModel,
-                membresiasViewModel,
-                pagosViewModel,
-                notificacionesViewModel);
+            var pagoRepository =
+                new PagoRepository(
+                    _context);
 
-        MainWindow =
-            loginWindow;
+            var pagoService =
+                new PagoService(
+                    pagoRepository,
+                    membresiaRepository);
 
-        loginWindow.Show();
+            var pagosViewModel =
+                new PagosViewModel(
+                    pagoService,
+                    membresiaService,
+                    notificationService);
+
+            // =========================================
+            // NOTIFICACIONES DE MEMBRESÍAS
+            // =========================================
+
+            var notificacionRepository =
+                new NotificacionRepository(
+                    _context);
+
+            var notificacionService =
+                new NotificacionService(
+                    notificacionRepository,
+                    membresiaRepository,
+                    emailService);
+
+            var notificacionesViewModel =
+                new NotificacionesViewModel(
+                    notificacionService,
+                    notificationService);
+
+            // =========================================
+            // COPIAS DE SEGURIDAD
+            // =========================================
+
+            var configuracionViewModel =
+                new ConfiguracionViewModel(
+                    backupService,
+                    notificationService);
+
+            // =========================================
+            // LOGIN
+            // =========================================
+
+            var loginWindow =
+                new LoginWindow(
+                    loginViewModel,
+                    tipoClienteViewModel,
+                    clientesViewModel,
+                    medicionesViewModel,
+                    tipoMembresiaViewModel,
+                    tarifasViewModel,
+                    membresiasViewModel,
+                    pagosViewModel,
+                    notificacionesViewModel,
+                    configuracionViewModel);
+
+            MainWindow =
+                loginWindow;
+
+            loginWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                "BlaxtorGym no pudo iniciar correctamente.\n\n" +
+                ex.Message,
+                "Error de inicio",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+
+            Shutdown();
+        }
     }
 
     protected override void OnExit(

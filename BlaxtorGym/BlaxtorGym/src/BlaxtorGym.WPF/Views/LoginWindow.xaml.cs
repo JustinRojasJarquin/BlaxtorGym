@@ -16,6 +16,7 @@ public partial class LoginWindow : Window
     private readonly MembresiasViewModel _membresiasViewModel;
     private readonly PagosViewModel _pagosViewModel;
     private readonly NotificacionesViewModel _notificacionesViewModel;
+    private readonly ConfiguracionViewModel _configuracionViewModel;
 
     public LoginWindow(
         LoginViewModel loginViewModel,
@@ -26,26 +27,49 @@ public partial class LoginWindow : Window
         TarifasViewModel tarifasViewModel,
         MembresiasViewModel membresiasViewModel,
         PagosViewModel pagosViewModel,
-        NotificacionesViewModel notificacionesViewModel)
+        NotificacionesViewModel notificacionesViewModel,
+        ConfiguracionViewModel configuracionViewModel)
     {
         InitializeComponent();
 
-        _loginViewModel = loginViewModel;
-        _tipoClienteViewModel = tipoClienteViewModel;
-        _clientesViewModel = clientesViewModel;
-        _medicionesViewModel = medicionesViewModel;
-        _tipoMembresiaViewModel = tipoMembresiaViewModel;
-        _tarifasViewModel = tarifasViewModel;
-        _membresiasViewModel = membresiasViewModel;
-        _pagosViewModel = pagosViewModel;
-        _notificacionesViewModel = notificacionesViewModel;
+        _loginViewModel =
+            loginViewModel;
 
-        DataContext = _loginViewModel;
+        _tipoClienteViewModel =
+            tipoClienteViewModel;
+
+        _clientesViewModel =
+            clientesViewModel;
+
+        _medicionesViewModel =
+            medicionesViewModel;
+
+        _tipoMembresiaViewModel =
+            tipoMembresiaViewModel;
+
+        _tarifasViewModel =
+            tarifasViewModel;
+
+        _membresiasViewModel =
+            membresiasViewModel;
+
+        _pagosViewModel =
+            pagosViewModel;
+
+        _notificacionesViewModel =
+            notificacionesViewModel;
+
+        _configuracionViewModel =
+            configuracionViewModel;
+
+        DataContext =
+            _loginViewModel;
 
         _loginViewModel.LoginExitoso +=
             AbrirVentanaPrincipal;
 
-        Loaded += LoginWindow_Loaded;
+        Loaded +=
+            LoginWindow_Loaded;
     }
 
     private void LoginWindow_Loaded(
@@ -105,7 +129,8 @@ public partial class LoginWindow : Window
                 _tarifasViewModel,
                 _membresiasViewModel,
                 _pagosViewModel,
-                _notificacionesViewModel);
+                _notificacionesViewModel,
+                _configuracionViewModel);
 
         System.Windows.Application.Current.MainWindow =
             ventanaPrincipal;
@@ -121,7 +146,8 @@ public partial class LoginWindow : Window
         _loginViewModel.LoginExitoso -=
             AbrirVentanaPrincipal;
 
-        Loaded -= LoginWindow_Loaded;
+        Loaded -=
+            LoginWindow_Loaded;
 
         base.OnClosed(e);
     }
