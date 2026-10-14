@@ -1,4 +1,5 @@
 ﻿using BlaxtorGym.src.BlaxtorGym.Domain.Common;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BlaxtorGym.src.BlaxtorGym.Domain.Entities;
 
@@ -17,4 +18,26 @@ public class MedicionFisica : BaseEntity
     public int ClienteId { get; set; }
 
     public Cliente Cliente { get; set; } = null!;
+
+    [NotMapped]
+    public decimal? Imc
+    {
+        get
+        {
+            if (!EstaturaCm.HasValue ||
+                EstaturaCm.Value <= 0)
+            {
+                return null;
+            }
+
+            decimal estaturaMetros =
+                EstaturaCm.Value / 100m;
+
+            decimal imc =
+                PesoKg /
+                (estaturaMetros * estaturaMetros);
+
+            return decimal.Round(imc, 2);
+        }
+    }
 }

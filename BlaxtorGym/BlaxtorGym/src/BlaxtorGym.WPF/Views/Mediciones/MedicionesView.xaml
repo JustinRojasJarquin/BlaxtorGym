@@ -4,45 +4,57 @@
              MinWidth="700"
              MinHeight="500">
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+	<Grid Margin="20">
 
-        <TextBlock Grid.Row="0"
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<!-- TÍTULO -->
+
+		<TextBlock Grid.Row="0"
                    Text="Mediciones físicas"
                    FontSize="22"
                    FontWeight="SemiBold"
                    Margin="0,0,0,15"/>
 
-        <Border Grid.Row="1"
+		<!-- FORMULARIO -->
+
+		<Border Grid.Row="1"
                 BorderBrush="Gray"
                 BorderThickness="1"
                 Padding="15"
                 Margin="0,0,0,15">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0"
+			<Grid>
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="130"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="130"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+
+				<!-- CLIENTE -->
+
+				<TextBlock Grid.Row="0"
                            Grid.Column="0"
                            Text="Cliente activo:"
                            VerticalAlignment="Center"
                            Margin="0,0,10,10"/>
-                <ComboBox Grid.Row="0"
+
+				<ComboBox Grid.Row="0"
                           Grid.Column="1"
                           Grid.ColumnSpan="3"
                           ItemsSource="{Binding ClientesActivos}"
@@ -50,53 +62,86 @@
                           DisplayMemberPath="NombreCompleto"
                           Margin="0,0,0,10"/>
 
-                <TextBlock Grid.Row="1"
+				<!-- FECHA -->
+
+				<TextBlock Grid.Row="1"
                            Grid.Column="0"
                            Text="Fecha:"
                            VerticalAlignment="Center"
                            Margin="0,0,10,10"/>
-                <DatePicker Grid.Row="1"
+
+				<DatePicker Grid.Row="1"
                             Grid.Column="1"
                             SelectedDate="{Binding FechaMedicion}"
                             Margin="0,0,15,10"/>
-                <TextBlock Grid.Row="1"
+
+				<!-- PESO -->
+
+				<TextBlock Grid.Row="1"
                            Grid.Column="2"
                            Text="Peso (kg):"
                            VerticalAlignment="Center"
                            Margin="0,0,10,10"/>
-                <TextBox Grid.Row="1"
+
+				<TextBox Grid.Row="1"
                          Grid.Column="3"
                          Text="{Binding PesoKg,
                                         UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,0,0,10"/>
 
-                <TextBlock Grid.Row="2"
+				<!-- ESTATURA -->
+
+				<TextBlock Grid.Row="2"
                            Grid.Column="0"
                            Text="Estatura (cm):"
                            VerticalAlignment="Center"
                            Margin="0,0,10,10"/>
-                <TextBox Grid.Row="2"
+
+				<TextBox Grid.Row="2"
                          Grid.Column="1"
                          Text="{Binding EstaturaCm,
                                         UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,0,15,10"/>
-                <TextBlock Grid.Row="2"
+
+				<!-- GRASA -->
+
+				<TextBlock Grid.Row="2"
                            Grid.Column="2"
                            Text="Grasa corporal (%):"
                            VerticalAlignment="Center"
                            Margin="0,0,10,10"/>
-                <TextBox Grid.Row="2"
+
+				<TextBox Grid.Row="2"
                          Grid.Column="3"
                          Text="{Binding PorcentajeGrasa,
                                         UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,0,0,10"/>
 
-                <TextBlock Grid.Row="3"
+				<!-- IMC -->
+
+				<TextBlock Grid.Row="3"
+                           Grid.Column="0"
+                           Text="IMC calculado:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,10,10"/>
+
+				<TextBlock Grid.Row="3"
+                           Grid.Column="1"
+                           Text="{Binding ImcActual}"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           Margin="0,0,15,10"/>
+
+				<!-- OBSERVACIÓN -->
+
+				<TextBlock Grid.Row="4"
                            Grid.Column="0"
                            Text="Observación:"
                            VerticalAlignment="Top"
                            Margin="0,5,10,10"/>
-                <TextBox Grid.Row="3"
+
+				<TextBox Grid.Row="4"
                          Grid.Column="1"
                          Grid.ColumnSpan="3"
                          Height="55"
@@ -107,31 +152,35 @@
                                         UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,0,0,10"/>
 
-                <StackPanel Grid.Row="4"
+				<!-- BOTONES -->
+
+				<StackPanel Grid.Row="5"
                             Grid.Column="0"
                             Grid.ColumnSpan="4"
                             Orientation="Horizontal"
                             HorizontalAlignment="Right">
-                    <Button Content="Registrar medición"
+
+					<Button Content="Registrar medición"
                             MinWidth="140"
                             Height="32"
                             Margin="5"
                             Command="{Binding RegistrarCommand}"/>
-                    <Button Content="Cargar historial"
-                            MinWidth="120"
-                            Height="32"
-                            Margin="5"
-                            Command="{Binding CargarHistorialCommand}"/>
-                    <Button Content="Limpiar"
+
+					<Button Content="Limpiar"
                             MinWidth="90"
                             Height="32"
                             Margin="5"
                             Command="{Binding LimpiarCommand}"/>
-                </StackPanel>
-            </Grid>
-        </Border>
 
-        <DataGrid Grid.Row="2"
+				</StackPanel>
+
+			</Grid>
+
+		</Border>
+
+		<!-- HISTORIAL -->
+
+		<DataGrid Grid.Row="2"
                   ItemsSource="{Binding Historial}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
@@ -139,27 +188,42 @@
                   SelectionMode="Single"
                   EnableRowVirtualization="True"
                   EnableColumnVirtualization="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Fecha"
+
+			<DataGrid.Columns>
+
+				<DataGridTextColumn Header="Fecha"
                                     Binding="{Binding FechaMedicion,
                                                       StringFormat={}{0:dd/MM/yyyy}}"
                                     Width="110"/>
-                <DataGridTextColumn Header="Peso (kg)"
+
+				<DataGridTextColumn Header="Peso (kg)"
                                     Binding="{Binding PesoKg,
                                                       StringFormat={}{0:N2}}"
                                     Width="110"/>
-                <DataGridTextColumn Header="Estatura (cm)"
+
+				<DataGridTextColumn Header="Estatura (cm)"
                                     Binding="{Binding EstaturaCm,
                                                       StringFormat={}{0:N2}}"
                                     Width="130"/>
-                <DataGridTextColumn Header="Grasa corporal (%)"
+
+				<DataGridTextColumn Header="IMC"
+                                    Binding="{Binding Imc,
+                                                      StringFormat={}{0:N2}}"
+                                    Width="90"/>
+
+				<DataGridTextColumn Header="Grasa corporal (%)"
                                     Binding="{Binding PorcentajeGrasa,
                                                       StringFormat={}{0:N2}}"
                                     Width="150"/>
-                <DataGridTextColumn Header="Observación"
+
+				<DataGridTextColumn Header="Observación"
                                     Binding="{Binding Observacion}"
                                     Width="*"/>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+
+			</DataGrid.Columns>
+
+		</DataGrid>
+
+	</Grid>
+
 </UserControl>

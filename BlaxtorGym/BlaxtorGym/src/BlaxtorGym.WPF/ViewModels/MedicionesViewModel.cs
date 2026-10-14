@@ -22,7 +22,9 @@ public class MedicionesViewModel : INotifyPropertyChanged
     private string _estaturaCm = string.Empty;
     private string _porcentajeGrasa = string.Empty;
     private string _observacion = string.Empty;
+
     private bool _procesando;
+    private bool _cargandoDatosIniciales;
 
     public MedicionesViewModel(
         ClienteService clienteService,
@@ -35,11 +37,8 @@ public class MedicionesViewModel : INotifyPropertyChanged
 
         RegistrarCommand = new RelayCommand(
             _ => RegistrarAsync(),
-            _ => !Procesando && ClienteSeleccionado is not null);
-
-        CargarHistorialCommand = new RelayCommand(
-            _ => CargarHistorialAsync(),
-            _ => !Procesando && ClienteSeleccionado is not null);
+            _ => !Procesando &&
+                 ClienteSeleccionado is not null);
 
         LimpiarCommand = new RelayCommand(
             _ =>
@@ -50,13 +49,16 @@ public class MedicionesViewModel : INotifyPropertyChanged
             _ => !Procesando);
     }
 
-    public ObservableCollection<Cliente> ClientesActivos { get; } = new();
+    public ObservableCollection<Cliente> ClientesActivos { get; }
+        = new();
 
-    public ObservableCollection<MedicionFisica> Historial { get; } = new();
+    public ObservableCollection<MedicionFisica> Historial { get; }
+        = new();
 
     public Cliente? ClienteSeleccionado
     {
         get => _clienteSeleccionado;
+
         set
         {
             if (_clienteSeleccionado == value)
@@ -65,15 +67,26 @@ public class MedicionesViewModel : INotifyPropertyChanged
             }
 
             _clienteSeleccionado = value;
+
             Historial.Clear();
+
             OnPropertyChanged();
+
             CommandManager.InvalidateRequerySuggested();
+
+            if (_clienteSeleccionado is not null &&
+                !_cargandoDatosIniciales)
+            {
+                _ = CargarHistorialAlCambiarClienteAsync(
+                    _clienteSeleccionado.Id);
+            }
         }
     }
 
     public DateTime? FechaMedicion
     {
         get => _fechaMedicion;
+
         set
         {
             if (_fechaMedicion == value)
@@ -82,6 +95,7 @@ public class MedicionesViewModel : INotifyPropertyChanged
             }
 
             _fechaMedicion = value;
+
             OnPropertyChanged();
         }
     }
@@ -89,6 +103,7 @@ public class MedicionesViewModel : INotifyPropertyChanged
     public string PesoKg
     {
         get => _pesoKg;
+
         set
         {
             if (_pesoKg == value)
@@ -97,13 +112,18 @@ public class MedicionesViewModel : INotifyPropertyChanged
             }
 
             _pesoKg = value;
+
             OnPropertyChanged();
+
+            OnPropertyChanged(
+                nameof(ImcActual));
         }
     }
 
     public string EstaturaCm
     {
         get => _estaturaCm;
+
         set
         {
             if (_estaturaCm == value)
@@ -112,13 +132,18 @@ public class MedicionesViewModel : INotifyPropertyChanged
             }
 
             _estaturaCm = value;
+
             OnPropertyChanged();
+
+            OnPropertyChanged(
+                nameof(ImcActual));
         }
     }
 
     public string PorcentajeGrasa
     {
         get => _porcentajeGrasa;
+
         set
         {
             if (_porcentajeGrasa == value)
@@ -127,6 +152,7 @@ public class MedicionesViewModel : INotifyPropertyChanged
             }
 
             _porcentajeGrasa = value;
+
             OnPropertyChanged();
         }
     }
@@ -134,6 +160,7 @@ public class MedicionesViewModel : INotifyPropertyChanged
     public string Observacion
     {
         get => _observacion;
+
         set
         {
             if (_observacion == value)
@@ -142,13 +169,46 @@ public class MedicionesViewModel : INotifyPropertyChanged
             }
 
             _observacion = value;
+
             OnPropertyChanged();
+        }
+    }
+
+    public string ImcActual
+    {
+        get
+        {
+            if (!IntentarLeerNumero(
+                    PesoKg,
+                    out decimal peso) ||
+                !IntentarLeerNumero(
+                    EstaturaCm,
+                    out decimal estaturaCm) ||
+                peso <= 0 ||
+                estaturaCm <= 0)
+            {
+                return "—";
+            }
+
+            decimal estaturaMetros =
+                estaturaCm / 100m;
+
+            decimal imc =
+                peso /
+                (estaturaMetros * estaturaMetros);
+
+            return decimal
+                .Round(imc, 2)
+                .ToString(
+                    "N2",
+                    CultureInfo.CurrentCulture);
         }
     }
 
     public bool Procesando
     {
         get => _procesando;
+
         private set
         {
             if (_procesando == value)
@@ -157,28 +217,34 @@ public class MedicionesViewModel : INotifyPropertyChanged
             }
 
             _procesando = value;
+
             OnPropertyChanged();
-            CommandManager.InvalidateRequerySuggested();
+
+            CommandManager
+                .InvalidateRequerySuggested();
         }
     }
 
     public ICommand RegistrarCommand { get; }
 
-    public ICommand CargarHistorialCommand { get; }
-
     public ICommand LimpiarCommand { get; }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    public event PropertyChangedEventHandler?
+        PropertyChanged;
 
     public async Task CargarAsync()
     {
         try
         {
             Procesando = true;
+            _cargandoDatosIniciales = true;
 
-            int? clienteIdSeleccionado = ClienteSeleccionado?.Id;
+            int? clienteIdSeleccionado =
+                ClienteSeleccionado?.Id;
+
             List<Cliente> clientes =
-                await _clienteService.ObtenerActivosAsync();
+                await _clienteService
+                    .ObtenerActivosAsync();
 
             ClientesActivos.Clear();
 
@@ -187,14 +253,20 @@ public class MedicionesViewModel : INotifyPropertyChanged
                 ClientesActivos.Add(cliente);
             }
 
-            ClienteSeleccionado = clienteIdSeleccionado.HasValue
-                ? ClientesActivos.FirstOrDefault(
-                    cliente => cliente.Id == clienteIdSeleccionado.Value)
-                : ClientesActivos.FirstOrDefault();
+            ClienteSeleccionado =
+                clienteIdSeleccionado.HasValue
+                    ? ClientesActivos
+                        .FirstOrDefault(
+                            cliente =>
+                                cliente.Id ==
+                                clienteIdSeleccionado.Value)
+                    : ClientesActivos
+                        .FirstOrDefault();
 
             if (ClienteSeleccionado is not null)
             {
-                await CargarHistorialInternoAsync();
+                await CargarHistorialInternoAsync(
+                    ClienteSeleccionado.Id);
             }
         }
         catch (Exception)
@@ -204,32 +276,40 @@ public class MedicionesViewModel : INotifyPropertyChanged
         }
         finally
         {
+            _cargandoDatosIniciales = false;
             Procesando = false;
         }
     }
 
-    private async Task CargarHistorialAsync()
+    private async Task
+        CargarHistorialAlCambiarClienteAsync(
+            int clienteId)
     {
-        if (ClienteSeleccionado is null)
-        {
-            _notificationService.MostrarAdvertencia(
-                "Debe seleccionar un cliente para consultar su historial.");
-            return;
-        }
-
         try
         {
-            Procesando = true;
-            await CargarHistorialInternoAsync();
+            List<MedicionFisica> mediciones =
+                await _medicionService
+                    .ObtenerHistorialPorClienteAsync(
+                        clienteId);
+
+            // El usuario pudo cambiar nuevamente de cliente
+            // mientras se hacía la consulta.
+            if (ClienteSeleccionado?.Id != clienteId)
+            {
+                return;
+            }
+
+            ActualizarHistorial(
+                mediciones);
         }
         catch (Exception)
         {
-            _notificationService.MostrarError(
-                "No fue posible cargar el historial de mediciones.");
-        }
-        finally
-        {
-            Procesando = false;
+            if (ClienteSeleccionado?.Id ==
+                clienteId)
+            {
+                _notificationService.MostrarError(
+                    "No fue posible cargar el historial de mediciones.");
+            }
         }
     }
 
@@ -251,19 +331,30 @@ public class MedicionesViewModel : INotifyPropertyChanged
                     "Debe seleccionar la fecha de medición.");
             }
 
-            decimal pesoKg = LeerNumeroRequerido(
-                PesoKg,
-                "Debe ingresar un peso válido.");
-            decimal? estaturaCm = LeerNumeroOpcional(EstaturaCm);
-            decimal? porcentajeGrasa = LeerNumeroOpcional(PorcentajeGrasa);
+            int clienteId =
+                ClienteSeleccionado.Id;
 
-            await _medicionService.RegistrarAsync(
-                ClienteSeleccionado.Id,
-                FechaMedicion.Value,
-                pesoKg,
-                estaturaCm,
-                porcentajeGrasa,
-                Observacion);
+            decimal pesoKg =
+                LeerNumeroRequerido(
+                    PesoKg,
+                    "Debe ingresar un peso válido.");
+
+            decimal? estaturaCm =
+                LeerNumeroOpcional(
+                    EstaturaCm);
+
+            decimal? porcentajeGrasa =
+                LeerNumeroOpcional(
+                    PorcentajeGrasa);
+
+            await _medicionService
+                .RegistrarAsync(
+                    clienteId,
+                    FechaMedicion.Value,
+                    pesoKg,
+                    estaturaCm,
+                    porcentajeGrasa,
+                    Observacion);
 
             _notificationService.MostrarExito(
                 "Medición registrada correctamente.");
@@ -272,7 +363,8 @@ public class MedicionesViewModel : INotifyPropertyChanged
 
             try
             {
-                await CargarHistorialInternoAsync();
+                await CargarHistorialInternoAsync(
+                    clienteId);
             }
             catch (Exception)
             {
@@ -282,11 +374,15 @@ public class MedicionesViewModel : INotifyPropertyChanged
         }
         catch (ArgumentException ex)
         {
-            _notificationService.MostrarAdvertencia(ex.Message);
+            _notificationService
+                .MostrarAdvertencia(
+                    ex.Message);
         }
         catch (InvalidOperationException ex)
         {
-            _notificationService.MostrarAdvertencia(ex.Message);
+            _notificationService
+                .MostrarAdvertencia(
+                    ex.Message);
         }
         catch (Exception)
         {
@@ -299,47 +395,66 @@ public class MedicionesViewModel : INotifyPropertyChanged
         }
     }
 
-    private async Task CargarHistorialInternoAsync()
+    private async Task
+        CargarHistorialInternoAsync(
+            int clienteId)
     {
-        if (ClienteSeleccionado is null)
-        {
-            Historial.Clear();
-            return;
-        }
-
         List<MedicionFisica> mediciones =
             await _medicionService
                 .ObtenerHistorialPorClienteAsync(
-                    ClienteSeleccionado.Id);
+                    clienteId);
 
+        if (ClienteSeleccionado?.Id != clienteId)
+        {
+            return;
+        }
+
+        ActualizarHistorial(
+            mediciones);
+    }
+
+    private void ActualizarHistorial(
+        IEnumerable<MedicionFisica> mediciones)
+    {
         Historial.Clear();
 
-        foreach (MedicionFisica medicion in mediciones)
+        foreach (MedicionFisica medicion
+                 in mediciones)
         {
-            Historial.Add(medicion);
+            Historial.Add(
+                medicion);
         }
     }
 
-    private static decimal LeerNumeroRequerido(
-        string texto,
-        string mensajeError)
+    private static decimal
+        LeerNumeroRequerido(
+            string texto,
+            string mensajeError)
     {
-        if (!IntentarLeerNumero(texto, out decimal valor))
+        if (!IntentarLeerNumero(
+                texto,
+                out decimal valor))
         {
-            throw new ArgumentException(mensajeError);
+            throw new ArgumentException(
+                mensajeError);
         }
 
         return valor;
     }
 
-    private static decimal? LeerNumeroOpcional(string texto)
+    private static decimal?
+        LeerNumeroOpcional(
+            string texto)
     {
-        if (string.IsNullOrWhiteSpace(texto))
+        if (string.IsNullOrWhiteSpace(
+                texto))
         {
             return null;
         }
 
-        if (!IntentarLeerNumero(texto, out decimal valor))
+        if (!IntentarLeerNumero(
+                texto,
+                out decimal valor))
         {
             throw new ArgumentException(
                 "Las mediciones opcionales deben contener un número válido.");
@@ -370,18 +485,29 @@ public class MedicionesViewModel : INotifyPropertyChanged
 
     private void LimpiarFormulario()
     {
-        FechaMedicion = DateTime.Today;
-        PesoKg = string.Empty;
-        EstaturaCm = string.Empty;
-        PorcentajeGrasa = string.Empty;
-        Observacion = string.Empty;
+        FechaMedicion =
+            DateTime.Today;
+
+        PesoKg =
+            string.Empty;
+
+        EstaturaCm =
+            string.Empty;
+
+        PorcentajeGrasa =
+            string.Empty;
+
+        Observacion =
+            string.Empty;
     }
 
     private void OnPropertyChanged(
-        [CallerMemberName] string? propertyName = null)
+        [CallerMemberName]
+        string? propertyName = null)
     {
         PropertyChanged?.Invoke(
             this,
-            new PropertyChangedEventArgs(propertyName));
+            new PropertyChangedEventArgs(
+                propertyName));
     }
 }
