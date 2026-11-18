@@ -9,17 +9,23 @@ public class MembresiaService
     private readonly IClienteRepository _clienteRepository;
     private readonly ITipoMembresiaRepository _tipoMembresiaRepository;
     private readonly IPrecioRepository _precioRepository;
+    private readonly BitacoraService _bitacoraService;
+    private readonly SesionService _sesionService;
 
     public MembresiaService(
         IMembresiaRepository membresiaRepository,
         IClienteRepository clienteRepository,
         ITipoMembresiaRepository tipoMembresiaRepository,
-        IPrecioRepository precioRepository)
+        IPrecioRepository precioRepository,
+        BitacoraService bitacoraService,
+        SesionService sesionService)
     {
         _membresiaRepository = membresiaRepository;
         _clienteRepository = clienteRepository;
         _tipoMembresiaRepository = tipoMembresiaRepository;
         _precioRepository = precioRepository;
+        _bitacoraService = bitacoraService;
+        _sesionService = sesionService;
     }
 
     public async Task<List<Membresia>> ObtenerTodasAsync()
@@ -142,6 +148,7 @@ public class MembresiaService
 
         await _membresiaRepository
             .AgregarAsync(membresia);
+        await RegistrarBitacoraAsync("CREAR", membresia.Id, $"Se creó una membresía para el cliente {cliente.NombreCompleto}.");
     }
 
     public async Task RenovarAsync(
@@ -265,6 +272,7 @@ public class MembresiaService
 
         await _membresiaRepository
             .AgregarAsync(nuevaMembresia);
+        await RegistrarBitacoraAsync("RENOVAR", nuevaMembresia.Id, $"Se renovó la membresía del cliente {cliente.NombreCompleto}.");
     }
 
     public async Task DesactivarAsync(
@@ -290,5 +298,12 @@ public class MembresiaService
 
         await _membresiaRepository
             .ActualizarAsync(membresia);
+        await RegistrarBitacoraAsync("DESACTIVAR", membresia.Id, $"Se desactivó la membresía del cliente {membresia.Cliente?.NombreCompleto ?? membresia.ClienteId.ToString()}.");
+    }
+
+    private async Task RegistrarBitacoraAsync(string accion, int entidadId, string descripcion)
+    {
+        if (_sesionService.UsuarioId is int usuarioId)
+            await _bitacoraService.RegistrarAsync(usuarioId, accion, "Membresia", entidadId, descripcion);
     }
 }

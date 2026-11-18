@@ -12,6 +12,7 @@ public class LoginViewModel : INotifyPropertyChanged
 {
     private readonly AutenticacionService _autenticacionService;
     private readonly INotificationService _notificationService;
+    private readonly SesionService _sesionService;
 
     private string _nombreUsuario = string.Empty;
     private string _contrasena = string.Empty;
@@ -19,10 +20,12 @@ public class LoginViewModel : INotifyPropertyChanged
 
     public LoginViewModel(
         AutenticacionService autenticacionService,
-        INotificationService notificationService)
+        INotificationService notificationService,
+        SesionService sesionService)
     {
         _autenticacionService = autenticacionService;
         _notificationService = notificationService;
+        _sesionService = sesionService;
 
         IniciarSesionCommand = new RelayCommand(
             _ => IniciarSesionAsync(),
@@ -103,6 +106,11 @@ public class LoginViewModel : INotifyPropertyChanged
 
             if (resultado.Exitoso)
             {
+                if (resultado.Usuario is not null)
+                {
+                    _sesionService.IniciarSesion(resultado.Usuario);
+                }
+
                 _notificationService.MostrarExito(
                     resultado.Mensaje);
 

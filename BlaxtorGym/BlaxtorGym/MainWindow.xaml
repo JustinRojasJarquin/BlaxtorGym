@@ -65,6 +65,9 @@
                     Margin="0,0,0,10"
                     Click="Configuracion_Click"/>
 
+            <Button Content="Reportes" Height="35" Margin="0,0,0,10" Click="Reportes_Click"/>
+            <Button Content="Bitácora" Height="35" Margin="0,0,0,10" Click="Bitacora_Click"/>
+
         </StackPanel>
 
         <ContentControl x:Name="ContenidoPrincipal"

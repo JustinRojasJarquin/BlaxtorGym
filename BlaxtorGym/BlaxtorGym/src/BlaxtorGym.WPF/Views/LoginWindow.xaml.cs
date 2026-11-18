@@ -17,6 +17,8 @@ public partial class LoginWindow : Window
     private readonly PagosViewModel _pagosViewModel;
     private readonly NotificacionesViewModel _notificacionesViewModel;
     private readonly ConfiguracionViewModel _configuracionViewModel;
+    private readonly ReportesViewModel _reportesViewModel;
+    private readonly BitacoraViewModel _bitacoraViewModel;
 
     public LoginWindow(
         LoginViewModel loginViewModel,
@@ -28,7 +30,9 @@ public partial class LoginWindow : Window
         MembresiasViewModel membresiasViewModel,
         PagosViewModel pagosViewModel,
         NotificacionesViewModel notificacionesViewModel,
-        ConfiguracionViewModel configuracionViewModel)
+        ConfiguracionViewModel configuracionViewModel,
+        ReportesViewModel reportesViewModel,
+        BitacoraViewModel bitacoraViewModel)
     {
         InitializeComponent();
 
@@ -61,6 +65,8 @@ public partial class LoginWindow : Window
 
         _configuracionViewModel =
             configuracionViewModel;
+        _reportesViewModel = reportesViewModel;
+        _bitacoraViewModel = bitacoraViewModel;
 
         DataContext =
             _loginViewModel;
@@ -130,7 +136,9 @@ public partial class LoginWindow : Window
                 _membresiasViewModel,
                 _pagosViewModel,
                 _notificacionesViewModel,
-                _configuracionViewModel);
+                _configuracionViewModel,
+                _reportesViewModel,
+                _bitacoraViewModel);
 
         System.Windows.Application.Current.MainWindow =
             ventanaPrincipal;

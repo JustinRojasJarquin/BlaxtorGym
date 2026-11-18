@@ -7,13 +7,19 @@ public class PagoService
 {
     private readonly IPagoRepository _pagoRepository;
     private readonly IMembresiaRepository _membresiaRepository;
+    private readonly BitacoraService _bitacoraService;
+    private readonly SesionService _sesionService;
 
     public PagoService(
         IPagoRepository pagoRepository,
-        IMembresiaRepository membresiaRepository)
+        IMembresiaRepository membresiaRepository,
+        BitacoraService bitacoraService,
+        SesionService sesionService)
     {
         _pagoRepository = pagoRepository;
         _membresiaRepository = membresiaRepository;
+        _bitacoraService = bitacoraService;
+        _sesionService = sesionService;
     }
 
     public async Task<List<Pago>> ObtenerTodosAsync()
@@ -107,6 +113,13 @@ public class PagoService
         };
 
         await _pagoRepository.AgregarAsync(pago);
+        await RegistrarBitacoraAsync(pago.Id, $"Se registró un pago por ₡{pago.Monto:N2}.");
+    }
+
+    private async Task RegistrarBitacoraAsync(int entidadId, string descripcion)
+    {
+        if (_sesionService.UsuarioId is int usuarioId)
+            await _bitacoraService.RegistrarAsync(usuarioId, "PAGAR", "Pago", entidadId, descripcion);
     }
 
     private static void ValidarMetodoPago(

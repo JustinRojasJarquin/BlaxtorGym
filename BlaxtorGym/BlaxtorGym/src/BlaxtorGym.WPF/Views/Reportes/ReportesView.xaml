@@ -1,5 +1,4 @@
-<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<UserControl x:Class="BlaxtorGym.src.BlaxtorGym.WPF.Views.ReportesView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid>
-    </Grid>
+    <Grid Margin="24"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions><Button Content="Generar reporte" Command="{Binding GenerarCommand}" Click="Cargar" Width="150" Height="32" HorizontalAlignment="Left"/><TabControl Grid.Row="1" Margin="0,16,0,0"><TabItem Header="Clientes"><DataGrid ItemsSource="{Binding Resultado.Clientes}" AutoGenerateColumns="True" IsReadOnly="True"/></TabItem><TabItem Header="Membresías"><DataGrid ItemsSource="{Binding Resultado.Membresias}" AutoGenerateColumns="True" IsReadOnly="True"/></TabItem><TabItem Header="Pagos"><DataGrid ItemsSource="{Binding Resultado.Pagos}" AutoGenerateColumns="True" IsReadOnly="True"/></TabItem><TabItem Header="Mediciones"><DataGrid ItemsSource="{Binding Resultado.Mediciones}" AutoGenerateColumns="True" IsReadOnly="True"/></TabItem></TabControl></Grid>
 </UserControl>

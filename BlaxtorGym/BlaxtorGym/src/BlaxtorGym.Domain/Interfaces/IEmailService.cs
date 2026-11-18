@@ -4,7 +4,6 @@ using System.Text;
 
 namespace BlaxtorGym.src.BlaxtorGym.Domain.Interfaces
 {
-    internal interface IEmailService
-    {
-    }
+    public interface IEmailService
+    { Task EnviarAsync(string destinatario, string asunto, string contenido); }
 }

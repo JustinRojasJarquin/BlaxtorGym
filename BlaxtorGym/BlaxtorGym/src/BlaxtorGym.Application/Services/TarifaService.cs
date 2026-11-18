@@ -8,15 +8,21 @@ public class TarifaService
     private readonly IPrecioRepository _precioRepository;
     private readonly ITipoClienteRepository _tipoClienteRepository;
     private readonly ITipoMembresiaRepository _tipoMembresiaRepository;
+    private readonly BitacoraService _bitacoraService;
+    private readonly SesionService _sesionService;
 
     public TarifaService(
         IPrecioRepository precioRepository,
         ITipoClienteRepository tipoClienteRepository,
-        ITipoMembresiaRepository tipoMembresiaRepository)
+        ITipoMembresiaRepository tipoMembresiaRepository,
+        BitacoraService bitacoraService,
+        SesionService sesionService)
     {
         _precioRepository = precioRepository;
         _tipoClienteRepository = tipoClienteRepository;
         _tipoMembresiaRepository = tipoMembresiaRepository;
+        _bitacoraService = bitacoraService;
+        _sesionService = sesionService;
     }
 
     public async Task<List<Precio>> ObtenerTodosAsync()
@@ -87,6 +93,7 @@ public class TarifaService
         };
 
         await _precioRepository.AgregarAsync(precio);
+        await RegistrarBitacoraAsync("CREAR", precio.Id, $"Se creó la tarifa {tipoCliente.Nombre} - {tipoMembresia.Nombre} por ₡{precio.Monto:N2}.");
     }
 
     public async Task CambiarTarifaAsync(
@@ -150,6 +157,7 @@ public class TarifaService
 
         await _precioRepository
             .AgregarAsync(nuevoPrecio);
+        await RegistrarBitacoraAsync("EDITAR", nuevoPrecio.Id, $"Se modificó la tarifa {tipoCliente.Nombre} - {tipoMembresia.Nombre} a ₡{nuevoPrecio.Monto:N2}.");
     }
 
     public async Task DesactivarAsync(int id)
@@ -173,6 +181,13 @@ public class TarifaService
         precio.FechaFinVigencia = DateTime.Now;
 
         await _precioRepository.ActualizarAsync(precio);
+        await RegistrarBitacoraAsync("DESACTIVAR", precio.Id, $"Se desactivó la tarifa por ₡{precio.Monto:N2}.");
+    }
+
+    private async Task RegistrarBitacoraAsync(string accion, int entidadId, string descripcion)
+    {
+        if (_sesionService.UsuarioId is int usuarioId)
+            await _bitacoraService.RegistrarAsync(usuarioId, accion, "Precio", entidadId, descripcion);
     }
 
     private async Task<TipoCliente>

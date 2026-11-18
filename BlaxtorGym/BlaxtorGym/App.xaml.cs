@@ -9,6 +9,7 @@ using BlaxtorGym.src.BlaxtorGym.WPF.Views;
 using System.IO;
 using System.Net.Http;
 using System.Windows;
+using QuestPDF.Infrastructure;
 
 namespace BlaxtorGym;
 
@@ -21,6 +22,7 @@ public partial class App : Application
         StartupEventArgs e)
     {
         base.OnStartup(e);
+        QuestPDF.Settings.License = LicenseType.Community;
 
         try
         {
@@ -92,6 +94,10 @@ public partial class App : Application
             INotificationService notificationService =
                 new MessageBoxNotificationService();
 
+            var sesionService = new SesionService();
+            var bitacoraRepository = new BitacoraRepository(_context);
+            var bitacoraService = new BitacoraService(bitacoraRepository);
+
             // =========================================
             // AUTENTICACIÓN
             // =========================================
@@ -107,7 +113,8 @@ public partial class App : Application
             var loginViewModel =
                 new LoginViewModel(
                     autenticacionService,
-                    notificationService);
+                    notificationService,
+                    sesionService);
 
             // =========================================
             // TIPOS DE CLIENTE
@@ -137,7 +144,9 @@ public partial class App : Application
             var clienteService =
                 new ClienteService(
                     clienteRepository,
-                    tipoClienteRepository);
+                    tipoClienteRepository,
+                    bitacoraService,
+                    sesionService);
 
             var consultaCedulaService =
                 new ConsultaCedulaService(
@@ -161,7 +170,9 @@ public partial class App : Application
             var medicionFisicaService =
                 new MedicionFisicaService(
                     medicionFisicaRepository,
-                    clienteRepository);
+                    clienteRepository,
+                    bitacoraService,
+                    sesionService);
 
             var medicionesViewModel =
                 new MedicionesViewModel(
@@ -198,7 +209,9 @@ public partial class App : Application
                 new TarifaService(
                     precioRepository,
                     tipoClienteRepository,
-                    tipoMembresiaRepository);
+                    tipoMembresiaRepository,
+                    bitacoraService,
+                    sesionService);
 
             var tarifasViewModel =
                 new TarifasViewModel(
@@ -220,7 +233,9 @@ public partial class App : Application
                     membresiaRepository,
                     clienteRepository,
                     tipoMembresiaRepository,
-                    precioRepository);
+                    precioRepository,
+                    bitacoraService,
+                    sesionService);
 
             var membresiasViewModel =
                 new MembresiasViewModel(
@@ -240,7 +255,9 @@ public partial class App : Application
             var pagoService =
                 new PagoService(
                     pagoRepository,
-                    membresiaRepository);
+                    membresiaRepository,
+                    bitacoraService,
+                    sesionService);
 
             var pagosViewModel =
                 new PagosViewModel(
@@ -261,6 +278,12 @@ public partial class App : Application
                     notificacionRepository,
                     membresiaRepository,
                     emailService);
+
+            var reporteRepository = new ReporteRepository(_context);
+            var reporteService = new ReporteService(reporteRepository);
+            var pdfService = new BlaxtorGym.src.BlaxtorGym.Infraestructure.Services.PdfService();
+            var reportesViewModel = new ReportesViewModel(reporteService, pdfService, clienteService, tipoClienteService, tipoMembresiaService, notificationService);
+            var bitacoraViewModel = new BitacoraViewModel(bitacoraService, notificationService);
 
             var notificacionesViewModel =
                 new NotificacionesViewModel(
@@ -291,7 +314,9 @@ public partial class App : Application
                     membresiasViewModel,
                     pagosViewModel,
                     notificacionesViewModel,
-                    configuracionViewModel);
+                    configuracionViewModel,
+                    reportesViewModel,
+                    bitacoraViewModel);
 
             MainWindow =
                 loginWindow;

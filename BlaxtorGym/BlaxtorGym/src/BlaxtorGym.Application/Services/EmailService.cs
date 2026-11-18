@@ -2,10 +2,11 @@
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
+using BlaxtorGym.src.BlaxtorGym.Domain.Interfaces;
 
 namespace BlaxtorGym.src.BlaxtorGym.Application.Services;
 
-public class EmailService
+public class EmailService : IEmailService
 {
     private readonly EmailSettings _settings;
 

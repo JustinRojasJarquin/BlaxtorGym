@@ -15,13 +15,19 @@ public class MedicionFisicaService
 
     private readonly IMedicionFisicaRepository _medicionRepository;
     private readonly IClienteRepository _clienteRepository;
+    private readonly BitacoraService _bitacoraService;
+    private readonly SesionService _sesionService;
 
     public MedicionFisicaService(
         IMedicionFisicaRepository medicionRepository,
-        IClienteRepository clienteRepository)
+        IClienteRepository clienteRepository,
+        BitacoraService bitacoraService,
+        SesionService sesionService)
     {
         _medicionRepository = medicionRepository;
         _clienteRepository = clienteRepository;
+        _bitacoraService = bitacoraService;
+        _sesionService = sesionService;
     }
 
     public async Task<List<MedicionFisica>> ObtenerHistorialPorClienteAsync(
@@ -82,8 +88,15 @@ public class MedicionFisicaService
         };
 
         await _medicionRepository.AgregarAsync(medicion);
+        await RegistrarBitacoraAsync(medicion.Id, $"Se registró una medición física para {cliente.NombreCompleto}.");
 
         return medicion;
+    }
+
+    private async Task RegistrarBitacoraAsync(int entidadId, string descripcion)
+    {
+        if (_sesionService.UsuarioId is int usuarioId)
+            await _bitacoraService.RegistrarAsync(usuarioId, "CREAR", "MedicionFisica", entidadId, descripcion);
     }
 
     private async Task<Cliente> ObtenerClienteActivoAsync(int clienteId)

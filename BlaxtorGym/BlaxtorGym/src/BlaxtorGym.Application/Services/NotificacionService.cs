@@ -9,12 +9,12 @@ public class NotificacionService
 
     private readonly INotificacionRepository _notificacionRepository;
     private readonly IMembresiaRepository _membresiaRepository;
-    private readonly EmailService _emailService;
+    private readonly IEmailService _emailService;
 
     public NotificacionService(
         INotificacionRepository notificacionRepository,
         IMembresiaRepository membresiaRepository,
-        EmailService emailService)
+        IEmailService emailService)
     {
         _notificacionRepository = notificacionRepository;
         _membresiaRepository = membresiaRepository;

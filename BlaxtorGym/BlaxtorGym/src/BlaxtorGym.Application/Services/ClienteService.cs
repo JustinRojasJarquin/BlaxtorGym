@@ -8,13 +8,19 @@ public class ClienteService
 {
     private readonly IClienteRepository _clienteRepository;
     private readonly ITipoClienteRepository _tipoClienteRepository;
+    private readonly BitacoraService _bitacoraService;
+    private readonly SesionService _sesionService;
 
     public ClienteService(
         IClienteRepository clienteRepository,
-        ITipoClienteRepository tipoClienteRepository)
+        ITipoClienteRepository tipoClienteRepository,
+        BitacoraService bitacoraService,
+        SesionService sesionService)
     {
         _clienteRepository = clienteRepository;
         _tipoClienteRepository = tipoClienteRepository;
+        _bitacoraService = bitacoraService;
+        _sesionService = sesionService;
     }
 
     public async Task<List<Cliente>> BuscarAsync(
@@ -95,6 +101,7 @@ public class ClienteService
         };
 
         await _clienteRepository.AgregarAsync(cliente);
+        await RegistrarBitacoraAsync("CREAR", cliente.Id, $"Se registró el cliente {cliente.NombreCompleto}.");
     }
 
     public async Task ModificarAsync(
@@ -147,6 +154,7 @@ public class ClienteService
         cliente.TipoClienteId = tipoCliente.Id;
 
         await _clienteRepository.ActualizarAsync(cliente);
+        await RegistrarBitacoraAsync("EDITAR", cliente.Id, $"Se modificó la información del cliente {cliente.NombreCompleto}.");
     }
 
     public async Task CambiarEstadoAsync(
@@ -165,6 +173,13 @@ public class ClienteService
         cliente.Activo = activo;
 
         await _clienteRepository.ActualizarAsync(cliente);
+        await RegistrarBitacoraAsync(activo ? "ACTIVAR" : "DESACTIVAR", cliente.Id, $"Se {(activo ? "activó" : "desactivó")} el cliente {cliente.NombreCompleto}.");
+    }
+
+    private async Task RegistrarBitacoraAsync(string accion, int entidadId, string descripcion)
+    {
+        if (_sesionService.UsuarioId is int usuarioId)
+            await _bitacoraService.RegistrarAsync(usuarioId, accion, "Cliente", entidadId, descripcion);
     }
 
     private async Task<TipoCliente>

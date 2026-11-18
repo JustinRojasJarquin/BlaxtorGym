@@ -33,7 +33,9 @@ public class MedicionFisicaServiceTests
         _service =
             new MedicionFisicaService(
                 _medicionRepository,
-                _clienteRepository);
+                _clienteRepository,
+                new BlaxtorGym.src.BlaxtorGym.Application.Services.BitacoraService(new BlaxtorGym.Tests.Fakes.FakeBitacoraRepository()),
+                new BlaxtorGym.src.BlaxtorGym.Application.Services.SesionService());
     }
 
     [TestMethod]

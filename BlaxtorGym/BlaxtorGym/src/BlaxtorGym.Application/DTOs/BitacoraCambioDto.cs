@@ -1,0 +1,2 @@
+namespace BlaxtorGym.src.BlaxtorGym.Application.DTOs;
+public class BitacoraCambioDto { public int Id { get; set; } public DateTime FechaHora { get; set; } public int UsuarioId { get; set; } public string Usuario { get; set; } = string.Empty; public string Accion { get; set; } = string.Empty; public string Entidad { get; set; } = string.Empty; public int? EntidadId { get; set; } public string Descripcion { get; set; } = string.Empty; }

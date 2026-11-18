@@ -15,6 +15,8 @@ public partial class MainWindow : Window
     private readonly PagosViewModel _pagosViewModel;
     private readonly NotificacionesViewModel _notificacionesViewModel;
     private readonly ConfiguracionViewModel _configuracionViewModel;
+    private readonly ReportesViewModel _reportesViewModel;
+    private readonly BitacoraViewModel _bitacoraViewModel;
 
     public MainWindow(
         TipoClienteViewModel tipoClienteViewModel,
@@ -25,7 +27,9 @@ public partial class MainWindow : Window
         MembresiasViewModel membresiasViewModel,
         PagosViewModel pagosViewModel,
         NotificacionesViewModel notificacionesViewModel,
-        ConfiguracionViewModel configuracionViewModel)
+        ConfiguracionViewModel configuracionViewModel,
+        ReportesViewModel reportesViewModel,
+        BitacoraViewModel bitacoraViewModel)
     {
         InitializeComponent();
 
@@ -55,6 +59,8 @@ public partial class MainWindow : Window
 
         _configuracionViewModel =
             configuracionViewModel;
+        _reportesViewModel = reportesViewModel;
+        _bitacoraViewModel = bitacoraViewModel;
 
         MostrarNotificaciones();
     }
@@ -137,6 +143,9 @@ public partial class MainWindow : Window
             new ConfiguracionView(
                 _configuracionViewModel);
     }
+
+    private void Reportes_Click(object sender, RoutedEventArgs e) => ContenidoPrincipal.Content = new ReportesView(_reportesViewModel);
+    private void Bitacora_Click(object sender, RoutedEventArgs e) => ContenidoPrincipal.Content = new BitacoraView(_bitacoraViewModel);
 
     private void MostrarNotificaciones()
     {
