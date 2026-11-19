@@ -12,6 +12,7 @@ public class MedicionFisicaService
     private const decimal PorcentajeGrasaMinimo = 0m;
     private const decimal PorcentajeGrasaMaximo = 100m;
     private const int ObservacionMaxima = 500;
+    private const decimal PerimetroMaximoCm = 300m;
 
     private readonly IMedicionFisicaRepository _medicionRepository;
     private readonly IClienteRepository _clienteRepository;
@@ -50,7 +51,14 @@ public class MedicionFisicaService
         decimal pesoKg,
         decimal? estaturaCm,
         decimal? porcentajeGrasa,
-        string? observacion)
+        string? observacion,
+        decimal? hombros = null,
+        decimal? pecho = null,
+        decimal? bicepsDerecho = null,
+        decimal? bicepsIzquierdo = null,
+        decimal? cintura = null,
+        decimal? musloDerecho = null,
+        decimal? musloIzquierdo = null)
     {
         Cliente cliente =
             await ObtenerClienteActivoAsync(clienteId);
@@ -68,6 +76,14 @@ public class MedicionFisicaService
             ValidarPorcentajeGrasa(porcentajeGrasa.Value);
         }
 
+        ValidarPerimetro(hombros, nameof(hombros));
+        ValidarPerimetro(pecho, nameof(pecho));
+        ValidarPerimetro(bicepsDerecho, nameof(bicepsDerecho));
+        ValidarPerimetro(bicepsIzquierdo, nameof(bicepsIzquierdo));
+        ValidarPerimetro(cintura, nameof(cintura));
+        ValidarPerimetro(musloDerecho, nameof(musloDerecho));
+        ValidarPerimetro(musloIzquierdo, nameof(musloIzquierdo));
+
         if ((observacion?.Trim().Length ?? 0) > ObservacionMaxima)
         {
             throw new ArgumentException(
@@ -82,6 +98,13 @@ public class MedicionFisicaService
             PesoKg = pesoKg,
             EstaturaCm = estaturaCm,
             PorcentajeGrasa = porcentajeGrasa,
+            Hombros = hombros,
+            Pecho = pecho,
+            BicepsDerecho = bicepsDerecho,
+            BicepsIzquierdo = bicepsIzquierdo,
+            Cintura = cintura,
+            MusloDerecho = musloDerecho,
+            MusloIzquierdo = musloIzquierdo,
             Observacion = string.IsNullOrWhiteSpace(observacion)
                 ? null
                 : observacion.Trim()
@@ -180,6 +203,21 @@ public class MedicionFisicaService
             throw new ArgumentOutOfRangeException(
                 nameof(porcentajeGrasa),
                 "El porcentaje de grasa debe estar entre 0 y 100.");
+        }
+    }
+
+    private static void ValidarPerimetro(decimal? valor, string nombreParametro)
+    {
+        if (!valor.HasValue)
+            return;
+
+        ValidarDosDecimales(valor.Value, nombreParametro);
+
+        if (valor.Value <= 0 || valor.Value > PerimetroMaximoCm)
+        {
+            throw new ArgumentOutOfRangeException(
+                nombreParametro,
+                $"El perímetro debe ser mayor que 0 y no superar {PerimetroMaximoCm} cm.");
         }
     }
 

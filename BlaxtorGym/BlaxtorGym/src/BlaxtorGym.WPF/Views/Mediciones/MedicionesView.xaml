@@ -44,6 +44,7 @@
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
 				<!-- CLIENTE -->
@@ -117,15 +118,28 @@
                                         UpdateSourceTrigger=PropertyChanged}"
                          Margin="0,0,0,10"/>
 
+				<!-- PERÍMETROS -->
+
+				<TextBlock Grid.Row="3" Grid.Column="0" Text="Perímetros (cm):" VerticalAlignment="Center" Margin="0,0,10,10"/>
+				<WrapPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Margin="0,0,0,10">
+					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding Hombros, UpdateSourceTrigger=PropertyChanged}" ToolTip="Hombros"/>
+					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding Pecho, UpdateSourceTrigger=PropertyChanged}" ToolTip="Pecho"/>
+					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding BicepsDerecho, UpdateSourceTrigger=PropertyChanged}" ToolTip="Bíceps D"/>
+					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding BicepsIzquierdo, UpdateSourceTrigger=PropertyChanged}" ToolTip="Bíceps I"/>
+					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding Cintura, UpdateSourceTrigger=PropertyChanged}" ToolTip="Cintura"/>
+					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding MusloDerecho, UpdateSourceTrigger=PropertyChanged}" ToolTip="Muslo D"/>
+					<TextBox Width="70" Text="{Binding MusloIzquierdo, UpdateSourceTrigger=PropertyChanged}" ToolTip="Muslo I"/>
+				</WrapPanel>
+
 				<!-- IMC -->
 
-				<TextBlock Grid.Row="3"
+				<TextBlock Grid.Row="4"
                            Grid.Column="0"
                            Text="IMC calculado:"
                            VerticalAlignment="Center"
                            Margin="0,0,10,10"/>
 
-				<TextBlock Grid.Row="3"
+				<TextBlock Grid.Row="4"
                            Grid.Column="1"
                            Text="{Binding ImcActual}"
                            FontSize="16"
@@ -135,13 +149,13 @@
 
 				<!-- OBSERVACIÓN -->
 
-				<TextBlock Grid.Row="4"
+				<TextBlock Grid.Row="5"
                            Grid.Column="0"
                            Text="Observación:"
                            VerticalAlignment="Top"
                            Margin="0,5,10,10"/>
 
-				<TextBox Grid.Row="4"
+				<TextBox Grid.Row="5"
                          Grid.Column="1"
                          Grid.ColumnSpan="3"
                          Height="55"
@@ -154,7 +168,7 @@
 
 				<!-- BOTONES -->
 
-				<StackPanel Grid.Row="5"
+				<StackPanel Grid.Row="6"
                             Grid.Column="0"
                             Grid.ColumnSpan="4"
                             Orientation="Horizontal"

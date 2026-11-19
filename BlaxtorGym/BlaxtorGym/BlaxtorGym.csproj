@@ -48,4 +48,10 @@
     <Resource Include="src\BlaxtorGym.WPF\Resources\Icons\pesa.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="src\BlaxtorGym.WPF\Resources\Images\logo.png" />
+    <EmbeddedResource Include="src\BlaxtorGym.WPF\Resources\Images\logo.png"
+                      LogicalName="BlaxtorGym.logo.png" />
+  </ItemGroup>
+
 </Project>

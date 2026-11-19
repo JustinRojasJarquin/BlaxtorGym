@@ -148,6 +148,14 @@ public class ReporteMedicionItemDto
 
     public decimal? PorcentajeGrasa { get; set; }
 
+    public decimal? Hombros { get; set; }
+    public decimal? Pecho { get; set; }
+    public decimal? BicepsDerecho { get; set; }
+    public decimal? BicepsIzquierdo { get; set; }
+    public decimal? Cintura { get; set; }
+    public decimal? MusloDerecho { get; set; }
+    public decimal? MusloIzquierdo { get; set; }
+
     public decimal? Imc { get; set; }
 
     public string Observacion { get; set; } =

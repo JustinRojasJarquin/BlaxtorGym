@@ -21,6 +21,13 @@ public class MedicionesViewModel : INotifyPropertyChanged
     private string _pesoKg = string.Empty;
     private string _estaturaCm = string.Empty;
     private string _porcentajeGrasa = string.Empty;
+    private string _hombros = string.Empty;
+    private string _pecho = string.Empty;
+    private string _bicepsDerecho = string.Empty;
+    private string _bicepsIzquierdo = string.Empty;
+    private string _cintura = string.Empty;
+    private string _musloDerecho = string.Empty;
+    private string _musloIzquierdo = string.Empty;
     private string _observacion = string.Empty;
 
     private bool _procesando;
@@ -156,6 +163,14 @@ public class MedicionesViewModel : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+
+    public string Hombros { get => _hombros; set { if (_hombros != value) { _hombros = value; OnPropertyChanged(); } } }
+    public string Pecho { get => _pecho; set { if (_pecho != value) { _pecho = value; OnPropertyChanged(); } } }
+    public string BicepsDerecho { get => _bicepsDerecho; set { if (_bicepsDerecho != value) { _bicepsDerecho = value; OnPropertyChanged(); } } }
+    public string BicepsIzquierdo { get => _bicepsIzquierdo; set { if (_bicepsIzquierdo != value) { _bicepsIzquierdo = value; OnPropertyChanged(); } } }
+    public string Cintura { get => _cintura; set { if (_cintura != value) { _cintura = value; OnPropertyChanged(); } } }
+    public string MusloDerecho { get => _musloDerecho; set { if (_musloDerecho != value) { _musloDerecho = value; OnPropertyChanged(); } } }
+    public string MusloIzquierdo { get => _musloIzquierdo; set { if (_musloIzquierdo != value) { _musloIzquierdo = value; OnPropertyChanged(); } } }
 
     public string Observacion
     {
@@ -347,6 +362,14 @@ public class MedicionesViewModel : INotifyPropertyChanged
                 LeerNumeroOpcional(
                     PorcentajeGrasa);
 
+            decimal? hombros = LeerNumeroOpcional(Hombros);
+            decimal? pecho = LeerNumeroOpcional(Pecho);
+            decimal? bicepsDerecho = LeerNumeroOpcional(BicepsDerecho);
+            decimal? bicepsIzquierdo = LeerNumeroOpcional(BicepsIzquierdo);
+            decimal? cintura = LeerNumeroOpcional(Cintura);
+            decimal? musloDerecho = LeerNumeroOpcional(MusloDerecho);
+            decimal? musloIzquierdo = LeerNumeroOpcional(MusloIzquierdo);
+
             await _medicionService
                 .RegistrarAsync(
                     clienteId,
@@ -354,7 +377,14 @@ public class MedicionesViewModel : INotifyPropertyChanged
                     pesoKg,
                     estaturaCm,
                     porcentajeGrasa,
-                    Observacion);
+                    Observacion,
+                    hombros,
+                    pecho,
+                    bicepsDerecho,
+                    bicepsIzquierdo,
+                    cintura,
+                    musloDerecho,
+                    musloIzquierdo);
 
             _notificationService.MostrarExito(
                 "Medición registrada correctamente.");
@@ -496,6 +526,14 @@ public class MedicionesViewModel : INotifyPropertyChanged
 
         PorcentajeGrasa =
             string.Empty;
+
+        Hombros = string.Empty;
+        Pecho = string.Empty;
+        BicepsDerecho = string.Empty;
+        BicepsIzquierdo = string.Empty;
+        Cintura = string.Empty;
+        MusloDerecho = string.Empty;
+        MusloIzquierdo = string.Empty;
 
         Observacion =
             string.Empty;

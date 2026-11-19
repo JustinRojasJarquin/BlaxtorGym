@@ -135,6 +135,14 @@ namespace BlaxtorGym.Migrations
                         .HasPrecision(5, 2)
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal?>("Hombros").HasPrecision(6, 2).HasColumnType("TEXT");
+                    b.Property<decimal?>("Pecho").HasPrecision(6, 2).HasColumnType("TEXT");
+                    b.Property<decimal?>("BicepsDerecho").HasPrecision(6, 2).HasColumnType("TEXT");
+                    b.Property<decimal?>("BicepsIzquierdo").HasPrecision(6, 2).HasColumnType("TEXT");
+                    b.Property<decimal?>("Cintura").HasPrecision(6, 2).HasColumnType("TEXT");
+                    b.Property<decimal?>("MusloDerecho").HasPrecision(6, 2).HasColumnType("TEXT");
+                    b.Property<decimal?>("MusloIzquierdo").HasPrecision(6, 2).HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClienteId", "FechaMedicion");

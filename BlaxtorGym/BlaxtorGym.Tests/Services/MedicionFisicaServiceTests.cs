@@ -161,6 +161,77 @@ public class MedicionFisicaServiceTests
     }
 
     [TestMethod]
+    public async Task RegistrarAsync_TodosLosPerimetrosValidos_GuardaCorrectamente()
+    {
+        var medicion = await _service.RegistrarAsync(7, DateTime.Today, 72m, 178m, null, null,
+            110m, 95m, 32m, 31m, 80m, 55m, 54m);
+
+        Assert.AreEqual(110m, medicion.Hombros);
+        Assert.AreEqual(95m, medicion.Pecho);
+        Assert.AreEqual(32m, medicion.BicepsDerecho);
+        Assert.AreEqual(31m, medicion.BicepsIzquierdo);
+        Assert.AreEqual(80m, medicion.Cintura);
+        Assert.AreEqual(55m, medicion.MusloDerecho);
+        Assert.AreEqual(54m, medicion.MusloIzquierdo);
+    }
+
+    [TestMethod]
+    public async Task RegistrarAsync_PerimetrosOpcionalesVacios_GuardaNull()
+    {
+        var medicion = await _service.RegistrarAsync(7, DateTime.Today, 72m, null, null, null);
+
+        Assert.IsNull(medicion.Hombros);
+        Assert.IsNull(medicion.MusloIzquierdo);
+    }
+
+    [TestMethod]
+    public async Task RegistrarAsync_HombrosCero_RechazaSinGuardar()
+    {
+        await VerifyThrowsAsync<ArgumentOutOfRangeException>(() =>
+            _service.RegistrarAsync(7, DateTime.Today, 72m, null, null, null, 0m));
+
+        Assert.IsNull(_medicionRepository.MedicionGuardada);
+    }
+
+    [TestMethod]
+    public async Task RegistrarAsync_PerimetroNegativo_RechazaSinGuardar()
+    {
+        await VerifyThrowsAsync<ArgumentOutOfRangeException>(() =>
+            _service.RegistrarAsync(7, DateTime.Today, 72m, null, null, null, null, null, -1m));
+
+        Assert.IsNull(_medicionRepository.MedicionGuardada);
+    }
+
+    [TestMethod]
+    public async Task RegistrarAsync_BicepsDerechoIzquierdo_GuardaValoresIndependientes()
+    {
+        var medicion = await _service.RegistrarAsync(7, DateTime.Today, 72m, null, null, null,
+            null, null, 33m, 31m);
+
+        Assert.AreEqual(33m, medicion.BicepsDerecho);
+        Assert.AreEqual(31m, medicion.BicepsIzquierdo);
+    }
+
+    [TestMethod]
+    public async Task RegistrarAsync_MusloDerechoIzquierdo_GuardaValoresIndependientes()
+    {
+        var medicion = await _service.RegistrarAsync(7, DateTime.Today, 72m, null, null, null,
+            null, null, null, null, null, 57m, 55m);
+
+        Assert.AreEqual(57m, medicion.MusloDerecho);
+        Assert.AreEqual(55m, medicion.MusloIzquierdo);
+    }
+
+    [TestMethod]
+    public async Task RegistrarAsync_PerimetrosValidos_MantieneCalculoImcCorrecto()
+    {
+        var medicion = await _service.RegistrarAsync(7, DateTime.Today, 72m, 180m, null, null,
+            110m, 95m, 32m, 31m, 80m, 55m, 54m);
+
+        Assert.AreEqual(22.22m, medicion.Imc);
+    }
+
+    [TestMethod]
     public async Task Repository_ConsultaHistorialPersistidoFiltradoYOrdenado()
     {
         await using var conexion =

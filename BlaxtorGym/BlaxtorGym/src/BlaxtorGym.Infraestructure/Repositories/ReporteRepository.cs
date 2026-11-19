@@ -474,6 +474,14 @@ public class ReporteRepository : IReporteRepository
                         PorcentajeGrasa =
                             medicion.PorcentajeGrasa,
 
+                        Hombros = medicion.Hombros,
+                        Pecho = medicion.Pecho,
+                        BicepsDerecho = medicion.BicepsDerecho,
+                        BicepsIzquierdo = medicion.BicepsIzquierdo,
+                        Cintura = medicion.Cintura,
+                        MusloDerecho = medicion.MusloDerecho,
+                        MusloIzquierdo = medicion.MusloIzquierdo,
+
                         Imc =
                             medicion.Imc,
 

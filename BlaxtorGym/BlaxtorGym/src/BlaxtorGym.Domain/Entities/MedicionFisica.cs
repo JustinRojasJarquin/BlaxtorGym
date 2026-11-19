@@ -13,6 +13,14 @@ public class MedicionFisica : BaseEntity
 
     public decimal? PorcentajeGrasa { get; set; }
 
+    public decimal? Hombros { get; set; }
+    public decimal? Pecho { get; set; }
+    public decimal? BicepsDerecho { get; set; }
+    public decimal? BicepsIzquierdo { get; set; }
+    public decimal? Cintura { get; set; }
+    public decimal? MusloDerecho { get; set; }
+    public decimal? MusloIzquierdo { get; set; }
+
     public string? Observacion { get; set; }
 
     public int ClienteId { get; set; }

@@ -314,6 +314,14 @@ public class AppDbContext : DbContext
             entidad.Property(x => x.PorcentajeGrasa)
                 .HasPrecision(5, 2);
 
+            entidad.Property(x => x.Hombros).HasPrecision(6, 2);
+            entidad.Property(x => x.Pecho).HasPrecision(6, 2);
+            entidad.Property(x => x.BicepsDerecho).HasPrecision(6, 2);
+            entidad.Property(x => x.BicepsIzquierdo).HasPrecision(6, 2);
+            entidad.Property(x => x.Cintura).HasPrecision(6, 2);
+            entidad.Property(x => x.MusloDerecho).HasPrecision(6, 2);
+            entidad.Property(x => x.MusloIzquierdo).HasPrecision(6, 2);
+
             entidad.Property(x => x.Observacion)
                 .HasMaxLength(500);
 
