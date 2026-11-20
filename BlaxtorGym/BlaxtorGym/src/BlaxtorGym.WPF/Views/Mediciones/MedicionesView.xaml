@@ -120,16 +120,43 @@
 
 				<!-- PERÍMETROS -->
 
-				<TextBlock Grid.Row="3" Grid.Column="0" Text="Perímetros (cm):" VerticalAlignment="Center" Margin="0,0,10,10"/>
-				<WrapPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Margin="0,0,0,10">
-					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding Hombros, UpdateSourceTrigger=PropertyChanged}" ToolTip="Hombros"/>
-					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding Pecho, UpdateSourceTrigger=PropertyChanged}" ToolTip="Pecho"/>
-					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding BicepsDerecho, UpdateSourceTrigger=PropertyChanged}" ToolTip="Bíceps D"/>
-					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding BicepsIzquierdo, UpdateSourceTrigger=PropertyChanged}" ToolTip="Bíceps I"/>
-					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding Cintura, UpdateSourceTrigger=PropertyChanged}" ToolTip="Cintura"/>
-					<TextBox Width="70" Margin="0,0,6,0" Text="{Binding MusloDerecho, UpdateSourceTrigger=PropertyChanged}" ToolTip="Muslo D"/>
-					<TextBox Width="70" Text="{Binding MusloIzquierdo, UpdateSourceTrigger=PropertyChanged}" ToolTip="Muslo I"/>
-				</WrapPanel>
+				<Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" BorderBrush="LightGray" BorderThickness="1" Padding="8" Margin="0,0,0,10">
+					<StackPanel>
+						<TextBlock Text="Perímetros corporales (cm)" FontWeight="SemiBold" Margin="0,0,0,8"/>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="110"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="110"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+
+							<TextBlock Grid.Row="0" Grid.Column="0" Text="Hombros:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+							<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Hombros, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,18,6"/>
+							<TextBlock Grid.Row="0" Grid.Column="2" Text="Pecho:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+							<TextBox Grid.Row="0" Grid.Column="3" Text="{Binding Pecho, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,6"/>
+
+							<TextBlock Grid.Row="1" Grid.Column="0" Text="Bíceps derecho:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+							<TextBox Grid.Row="1" Grid.Column="1" Text="{Binding BicepsDerecho, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,18,6"/>
+							<TextBlock Grid.Row="1" Grid.Column="2" Text="Bíceps izquierdo:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+							<TextBox Grid.Row="1" Grid.Column="3" Text="{Binding BicepsIzquierdo, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,6"/>
+
+							<TextBlock Grid.Row="2" Grid.Column="0" Text="Cintura:" VerticalAlignment="Center" Margin="0,0,8,6"/>
+							<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Cintura, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,18,6"/>
+
+							<TextBlock Grid.Row="3" Grid.Column="0" Text="Muslo derecho:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+							<TextBox Grid.Row="3" Grid.Column="1" Text="{Binding MusloDerecho, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,18,0"/>
+							<TextBlock Grid.Row="3" Grid.Column="2" Text="Muslo izquierdo:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+							<TextBox Grid.Row="3" Grid.Column="3" Text="{Binding MusloIzquierdo, UpdateSourceTrigger=PropertyChanged}"/>
+						</Grid>
+					</StackPanel>
+				</Border>
 
 				<!-- IMC -->
 
